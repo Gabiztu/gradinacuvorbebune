@@ -109,6 +109,7 @@ export default function LoginPage() {
       } else {
         setLoading(false)
         setTimeout(() => {
+          router.refresh()
           router.push('/')
         }, 300)
       }
