@@ -109,8 +109,7 @@ export default function LoginPage() {
       } else {
         setLoading(false)
         setTimeout(() => {
-          router.refresh()
-          router.push('/')
+          window.location.href = '/'
         }, 300)
       }
     } catch {
