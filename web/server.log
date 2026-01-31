@@ -1,0 +1,359 @@
+
+> cuvintede@1.0.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use by process 41148, using available port 3003 instead.
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:3003
+   - Network:      http://192.168.144.1:3003
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2s
+ ✓ Compiled /middleware in 413ms (164 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 5.4s (767 modules)
+ GET /login?redirect=%2Flogin 200 in 6251ms
+ ✓ Compiled in 985ms (317 modules)
+ GET /login 200 in 66ms
+ ✓ Compiled in 452ms (317 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 465ms (317 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /login?redirect=%2Flogin 200 in 290ms
+ GET /login?redirect=%2Flogin 200 in 265ms
+ ✓ Compiled in 721ms (760 modules)
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_exec__ (C:\Users\drago\Desktop\cuvintede\web\.next\server\app\login\page.js:389:39)
+    at <unknown> (C:\Users\drago\Desktop\cuvintede\web\.next\server\app\login\page.js:390:306)
+    at <unknown> (C:\Users\drago\Desktop\cuvintede\web\.next\server\app\login\page.js:390:47)
+    at Object.<anonymous> (C:\Users\drago\Desktop\cuvintede\web\.next\server\app\login\page.js:393:3) {
+  page: '/login'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 667ms (1085 modules)
+ GET /login?redirect=%2Flogin 500 in 1394ms
+ GET /login?redirect=%2Flogin 200 in 117ms
+ GET /login?redirect=%2Flogin 200 in 28ms
+ GET /login?redirect=%2Flogin 200 in 320ms
+ GET /login 200 in 151ms
+ ✓ Compiled in 903ms (992 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_exec__ (C:\Users\drago\Desktop\cuvintede\web\.next\server\app\login\page.js:389:39)
+    at <unknown> (C:\Users\drago\Desktop\cuvintede\web\.next\server\app\login\page.js:390:306)
+    at <unknown> (C:\Users\drago\Desktop\cuvintede\web\.next\server\app\login\page.js:390:47)
+    at Object.<anonymous> (C:\Users\drago\Desktop\cuvintede\web\.next\server\app\login\page.js:393:3) {
+  page: '/login'
+}
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled /_error in 355ms (1085 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\drago\Desktop\cuvintede\web\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\drago\\Desktop\\cuvintede\\web\\.next\\server\\pages\\_document.js'
+}
+ GET /login?redirect=%2Flogin 500 in 3209ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\2.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\2.pack.gz'
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\4.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\4.pack.gz'
+ ✓ Compiled in 1213ms (1249 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\2.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\2.pack.gz'
+ ✓ Compiled in 3.7s (1099 modules)
+ ✓ Compiled in 801ms (1249 modules)
+ ✓ Compiled in 692ms (1249 modules)
+ ✓ Compiled in 1137ms (1099 modules)
+ ✓ Compiled in 1574ms (1103 modules)
+ ✓ Compiled in 1217ms (1107 modules)
+ ✓ Compiled in 633ms (1107 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz'
+ ✓ Compiled in 745ms (1107 modules)
+ ✓ Compiled in 473ms (1107 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\1.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\1.pack.gz'
+ ✓ Compiled in 879ms (1107 modules)
+ ✓ Compiled in 558ms (1107 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\2.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\2.pack.gz'
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\1.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\1.pack.gz'
+ ✓ Compiled in 773ms (473 modules)
+ ✓ Compiled in 227ms (473 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\2.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\2.pack.gz'
+ ✓ Compiled in 311ms (473 modules)
+ ✓ Compiled in 233ms (473 modules)
+ ✓ Compiled in 219ms (473 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\1.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\1.pack.gz'
+ ✓ Compiled in 405ms (473 modules)
+ ✓ Compiled in 744ms (473 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\4.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\4.pack.gz'
+ ✓ Compiled in 1292ms (473 modules)
+ ✓ Compiled in 296ms (473 modules)
+ ✓ Compiled in 260ms (473 modules)
+ ✓ Compiled in 217ms (473 modules)
+ ✓ Compiled in 368ms (473 modules)
+ ✓ Compiled in 1122ms (473 modules)
+ ✓ Compiled in 362ms (473 modules)
+ ✓ Compiled in 349ms (473 modules)
+ ✓ Compiled in 404ms (473 modules)
+ ✓ Compiled in 465ms (473 modules)
+ ✓ Compiled in 366ms (473 modules)
+ ✓ Compiled in 230ms (473 modules)
+ ✓ Compiled in 177ms (473 modules)
+ ✓ Compiled in 180ms (473 modules)
+ ✓ Compiled in 669ms (473 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\3.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\3.pack.gz'
+ ✓ Compiled in 365ms (473 modules)
+ ✓ Compiled in 300ms (473 modules)
+ ✓ Compiled in 243ms (473 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\3.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\3.pack.gz'
+ ⨯ ./app/globals.css:300:3
+Syntax error: C:\Users\drago\Desktop\cuvintede\web\app\globals.css The `via-accent-500` class does not exist. If `via-accent-500` is a custom class, make sure it is defined within a `@layer` directive.
+
+ [90m 298 | [39m[90m/* Premium gradient text */[39m
+ [90m 299 | [39m[33m.gradient-text[39m [33m{[39m
+[1m[31m>[39m[22m[90m 300 | [39m  [36m@apply[39m bg-clip-text text-transparent bg-gradient-to-r from-primary-600 via-accent-500 to-primary-600[33m;[39m
+ [90m     | [39m  [1m[31m^[39m[22m
+ [90m 301 | [39m  background-size[33m:[39m 200% auto[33m;[39m
+ [90m 302 | [39m  animation[33m:[39m gradient-shift 3s ease infinite[33m;[39m
+ ⨯ ./app/globals.css:57:5
+Syntax error: C:\Users\drago\Desktop\cuvintede\web\app\globals.css The `shadow-soft` class does not exist. If `shadow-soft` is a custom class, make sure it is defined within a `@layer` directive.
+
+ [90m 55 | [39m[36m@layer[39m components [33m{[39m
+ [90m 56 | [39m  [33m.glass[39m [33m{[39m
+[1m[31m>[39m[22m[90m 57 | [39m    [36m@apply[39m bg-white/70 backdrop-blur-xl border border-white/40 shadow-soft[33m;[39m
+ [90m    | [39m    [1m[31m^[39m[22m
+ [90m 58 | [39m  [33m}[39m
+ [90m 59 | [39m
+ ⨯ ./app/globals.css:57:5
+Syntax error: C:\Users\drago\Desktop\cuvintede\web\app\globals.css The `shadow-soft` class does not exist. If `shadow-soft` is a custom class, make sure it is defined within a `@layer` directive.
+
+ [90m 55 | [39m[36m@layer[39m components [33m{[39m
+ [90m 56 | [39m  [33m.glass[39m [33m{[39m
+[1m[31m>[39m[22m[90m 57 | [39m    [36m@apply[39m bg-white/70 backdrop-blur-xl border border-white/40 shadow-soft[33m;[39m
+ [90m    | [39m    [1m[31m^[39m[22m
+ [90m 58 | [39m  [33m}[39m
+ [90m 59 | [39m
+ ⨯ ./app/globals.css:57:5
+Syntax error: C:\Users\drago\Desktop\cuvintede\web\app\globals.css The `shadow-soft` class does not exist. If `shadow-soft` is a custom class, make sure it is defined within a `@layer` directive.
+
+ [90m 55 | [39m[36m@layer[39m components [33m{[39m
+ [90m 56 | [39m  [33m.glass[39m [33m{[39m
+[1m[31m>[39m[22m[90m 57 | [39m    [36m@apply[39m bg-white/70 backdrop-blur-xl border border-white/40 shadow-soft[33m;[39m
+ [90m    | [39m    [1m[31m^[39m[22m
+ [90m 58 | [39m  [33m}[39m
+ [90m 59 | [39m
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\Users\drago\Desktop\cuvintede\web\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\Users\drago\Desktop\cuvintede\web\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\Users\drago\Desktop\cuvintede\web\app\globals.css': No serializer registered for PostCSSSyntaxError
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> webpack/lib/ModuleBuildError -> PostCSSSyntaxError
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: EPERM: operation not permitted, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\15.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\15.pack.gz'
+ ⨯ ./app/globals.css:57:5
+Syntax error: C:\Users\drago\Desktop\cuvintede\web\app\globals.css The `shadow-soft` class does not exist. If `shadow-soft` is a custom class, make sure it is defined within a `@layer` directive.
+
+ [90m 55 | [39m[36m@layer[39m components [33m{[39m
+ [90m 56 | [39m  [33m.glass[39m [33m{[39m
+[1m[31m>[39m[22m[90m 57 | [39m    [36m@apply[39m bg-white/70 backdrop-blur-xl border border-white/40 shadow-soft[33m;[39m
+ [90m    | [39m    [1m[31m^[39m[22m
+ [90m 58 | [39m  [33m}[39m
+ [90m 59 | [39m
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\14.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\14.pack.gz'
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\Users\drago\Desktop\cuvintede\web\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\Users\drago\Desktop\cuvintede\web\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\Users\drago\Desktop\cuvintede\web\app\globals.css': No serializer registered for PostCSSSyntaxError
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> webpack/lib/ModuleBuildError -> PostCSSSyntaxError
+ ✓ Compiled in 1519ms (638 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\2.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\2.pack.gz'
+ ⨯ ./app/globals.css:324:3
+Syntax error: C:\Users\drago\Desktop\cuvintede\web\app\globals.css The `via-accent-500` class does not exist. If `via-accent-500` is a custom class, make sure it is defined within a `@layer` directive.
+
+ [90m 322 | [39m[90m/* Premium gradient text */[39m
+ [90m 323 | [39m[33m.gradient-text[39m [33m{[39m
+[1m[31m>[39m[22m[90m 324 | [39m  [36m@apply[39m bg-clip-text text-transparent bg-gradient-to-r from-primary-600 via-accent-500 to-primary-600[33m;[39m
+ [90m     | [39m  [1m[31m^[39m[22m
+ [90m 325 | [39m  background-size[33m:[39m 200% auto[33m;[39m
+ [90m 326 | [39m  animation[33m:[39m gradient-shift 3s ease infinite[33m;[39m
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|C:\Users\drago\Desktop\cuvintede\web\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[2]!C:\Users\drago\Desktop\cuvintede\web\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js??ruleSet[1].rules[14].oneOf[10].use[3]!C:\Users\drago\Desktop\cuvintede\web\app\globals.css': No serializer registered for PostCSSSyntaxError
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> webpack/lib/ModuleBuildError -> PostCSSSyntaxError
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\6.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\6.pack.gz'
+ ✓ Compiled in 4.3s (1115 modules)
+ ✓ Compiled in 497ms (477 modules)
+ ✓ Compiled in 1097ms (1115 modules)
+ ✓ Compiled in 844ms (1115 modules)
+ ✓ Compiled in 1344ms (1115 modules)
+ ✓ Compiled in 509ms (477 modules)
+ ✓ Compiled in 699ms (477 modules)
+ ✓ Compiled in 514ms (477 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: EPERM: operation not permitted, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\5.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\5.pack.gz'
+ ✓ Compiled in 649ms (477 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\1.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\1.pack.gz'
+ ✓ Compiled in 640ms (477 modules)
+ ✓ Compiled in 1600ms (1121 modules)
+ ✓ Compiled in 445ms (479 modules)
+ ✓ Compiled in 423ms (479 modules)
+ ✓ Compiled in 393ms (479 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: EPERM: operation not permitted, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\8.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\8.pack.gz'
+ ✓ Compiled in 447ms (479 modules)
+ ✓ Compiled in 445ms (479 modules)
+ ✓ Compiled in 426ms (479 modules)
+ ✓ Compiled in 443ms (479 modules)
+ ✓ Compiled in 433ms (479 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz'
+ ✓ Compiled in 394ms (479 modules)
+ ✓ Compiled in 342ms (479 modules)
+ ✓ Compiled in 1078ms (1123 modules)
+ ✓ Compiled in 651ms (1123 modules)
+ ✓ Compiled in 1053ms (1123 modules)
+ ✓ Compiled in 713ms (1123 modules)
+ ✓ Compiled in 647ms (1123 modules)
+ ✓ Compiled in 390ms (480 modules)
+ ✓ Compiled in 409ms (480 modules)
+ ✓ Compiled in 313ms (480 modules)
+ ✓ Compiled in 352ms (480 modules)
+ ✓ Compiled in 321ms (480 modules)
+ ✓ Compiled in 280ms (480 modules)
+ ✓ Compiled in 922ms (1123 modules)
+ ✓ Compiled in 2.2s (1123 modules)
+ ✓ Compiled in 867ms (1123 modules)
+ ✓ Compiled in 1524ms (1123 modules)
+ ✓ Compiled in 1341ms (1123 modules)
+ ✓ Compiled in 1157ms (1123 modules)
+ ✓ Compiled in 1000ms (1123 modules)
+ ✓ Compiled in 930ms (1123 modules)
+ ✓ Compiled in 748ms (480 modules)
+ ✓ Compiled in 620ms (480 modules)
+ ✓ Compiled in 471ms (480 modules)
+ ✓ Compiled in 435ms (480 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\0.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\0.pack.gz'
+ ✓ Compiled in 513ms (480 modules)
+ ✓ Compiled in 629ms (480 modules)
+ ✓ Compiled in 646ms (480 modules)
+ ✓ Compiled in 2.2s (1123 modules)
+ ✓ Compiled in 965ms (1123 modules)
+ ✓ Compiled in 641ms (480 modules)
+ ✓ Compiled in 392ms (480 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz'
+ ✓ Compiled in 827ms (480 modules)
+ ✓ Compiled in 495ms (480 modules)
+ ✓ Compiled in 399ms (480 modules)
+ ✓ Compiled in 565ms (480 modules)
+ ✓ Compiled in 662ms (480 modules)
+ ✓ Compiled in 395ms (480 modules)
+ ✓ Compiled in 331ms (480 modules)
+ ✓ Compiled in 574ms (480 modules)
+ ✓ Compiled in 467ms (480 modules)
+ ✓ Compiled in 1994ms (1123 modules)
+ ✓ Compiled in 348ms (480 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\5.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\server-development\5.pack.gz'
+ ✓ Compiled in 377ms (480 modules)
+ ✓ Compiled in 341ms (480 modules)
+ ✓ Compiled in 428ms (480 modules)
+ ✓ Compiled in 398ms (480 modules)
+ ✓ Compiled in 1841ms (480 modules)
+ ✓ Compiled in 637ms (480 modules)
+ ✓ Compiled in 551ms (480 modules)
+ ✓ Compiled in 377ms (480 modules)
+ ✓ Compiled in 407ms (480 modules)
+ ✓ Compiled in 616ms (480 modules)
+ ✓ Compiled in 573ms (480 modules)
+ ✓ Compiled in 428ms (480 modules)
+ ✓ Compiled in 470ms (480 modules)
+ ✓ Compiled in 443ms (480 modules)
+ ✓ Compiled in 456ms (480 modules)
+ ✓ Compiled in 409ms (480 modules)
+ ✓ Compiled in 508ms (480 modules)
+ ✓ Compiled in 465ms (480 modules)
+ ✓ Compiled in 428ms (480 modules)
+ ✓ Compiled in 433ms (480 modules)
+ ✓ Compiled in 412ms (480 modules)
+ ✓ Compiled in 456ms (480 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\5.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\5.pack.gz'
+ ✓ Compiled in 531ms (480 modules)
+ ✓ Compiled in 432ms (480 modules)
+ ✓ Compiled in 439ms (480 modules)
+ ✓ Compiled in 437ms (480 modules)
+ ✓ Compiled in 425ms (480 modules)
+ ✓ Compiled in 498ms (480 modules)
+ ✓ Compiled in 481ms (480 modules)
+ ✓ Compiled in 355ms (480 modules)
+ ✓ Compiled in 547ms (480 modules)
+ ✓ Compiled in 486ms (480 modules)
+ ✓ Compiled in 449ms (480 modules)
+ ✓ Compiled in 478ms (480 modules)
+ ✓ Compiled in 425ms (480 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz'
+ ✓ Compiled in 458ms (480 modules)
+ ✓ Compiled in 467ms (480 modules)
+ ✓ Compiled in 452ms (480 modules)
+ ✓ Compiled in 480ms (480 modules)
+ ✓ Compiled in 452ms (480 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz'
+ ✓ Compiled in 477ms (480 modules)
+ ✓ Compiled in 439ms (480 modules)
+ ✓ Compiled in 445ms (480 modules)
+ ✓ Compiled in 439ms (480 modules)
+ ✓ Compiled in 510ms (480 modules)
+ ✓ Compiled in 503ms (480 modules)
+ ✓ Compiled in 434ms (480 modules)
+ ✓ Compiled in 414ms (480 modules)
+ ✓ Compiled in 492ms (480 modules)
+ ✓ Compiled in 472ms (480 modules)
+ ✓ Compiled in 421ms (480 modules)
+ ✓ Compiled in 458ms (480 modules)
+ ✓ Compiled in 543ms (480 modules)
+ ✓ Compiled in 462ms (480 modules)
+ ✓ Compiled in 437ms (480 modules)
+ ✓ Compiled in 472ms (480 modules)
+ ✓ Compiled in 463ms (480 modules)
+ ✓ Compiled in 395ms (480 modules)
+ ✓ Compiled in 393ms (480 modules)
+ ✓ Compiled in 512ms (480 modules)
+ ✓ Compiled in 465ms (480 modules)
+ ✓ Compiled in 418ms (480 modules)
+ ✓ Compiled in 528ms (480 modules)
+ ✓ Compiled in 437ms (480 modules)
+ ✓ Compiled in 407ms (480 modules)
+ ✓ Compiled in 501ms (480 modules)
+ ✓ Compiled in 427ms (480 modules)
+ ✓ Compiled in 437ms (480 modules)
+ ✓ Compiled in 516ms (480 modules)
+ ✓ Compiled in 468ms (480 modules)
+ ✓ Compiled in 397ms (480 modules)
+ ✓ Compiled in 509ms (480 modules)
+ ✓ Compiled in 445ms (480 modules)
+ ✓ Compiled in 405ms (480 modules)
+ ✓ Compiled in 597ms (480 modules)
+ ✓ Compiled in 448ms (480 modules)
+ ✓ Compiled in 489ms (480 modules)
+ ✓ Compiled in 521ms (480 modules)
+ ✓ Compiled in 329ms (480 modules)
+ ✓ Compiled in 323ms (480 modules)
+ ✓ Compiled in 354ms (480 modules)
+ ✓ Compiled in 324ms (480 modules)
+ ✓ Compiled in 403ms (480 modules)
+ ✓ Compiled in 852ms (480 modules)
+ ✓ Compiled in 847ms (480 modules)
+ ✓ Compiled in 477ms (480 modules)
+ ✓ Compiled in 590ms (480 modules)
+ ✓ Compiled in 602ms (480 modules)
+ ✓ Compiled in 779ms (480 modules)
+ ✓ Compiled in 397ms (480 modules)
+ ✓ Compiled in 440ms (480 modules)
+ ✓ Compiled in 461ms (480 modules)
+ ✓ Compiled in 589ms (480 modules)
+ ✓ Compiled in 604ms (480 modules)
+ ✓ Compiled in 637ms (480 modules)
+ ✓ Compiled in 557ms (480 modules)
+ ✓ Compiled in 428ms (480 modules)
+ ✓ Compiled in 412ms (480 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz_' -> 'C:\Users\drago\Desktop\cuvintede\web\.next\cache\webpack\client-development\0.pack.gz'
+ ✓ Compiled in 422ms (480 modules)
+ ✓ Compiled in 330ms (480 modules)
+ ✓ Compiled in 541ms (480 modules)
+ ✓ Compiled in 473ms (480 modules)
+ ✓ Compiled in 437ms (480 modules)
+ ✓ Compiled in 384ms (480 modules)
+ ✓ Compiled in 457ms (480 modules)
+ ✓ Compiled in 532ms (480 modules)
+ ✓ Compiled in 513ms (480 modules)
+ ✓ Compiled in 441ms (480 modules)
+ ✓ Compiled in 399ms (480 modules)
+ ✓ Compiled in 544ms (480 modules)
+ ✓ Compiled in 441ms (480 modules)
+ ✓ Compiled in 397ms (480 modules)
+ ✓ Compiled in 470ms (480 modules)
+ ✓ Compiled in 427ms (480 modules)
+ ✓ Compiled in 622ms (480 modules)
