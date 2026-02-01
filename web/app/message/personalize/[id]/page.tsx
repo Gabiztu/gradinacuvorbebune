@@ -188,45 +188,52 @@ export default function PersonalizePage({ params }: { params: Promise<{ id: stri
   }
 
   const handleWhatsApp = async () => {
-    if (!user || !message) return
-    
-    const today = new Date().toISOString().split('T')[0]
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-    
-    const { data: freshProfile } = await supabase
-      .from('profiles')
-      .select('total_xp, streak_count, last_active_date')
-      .eq('id', user.id)
-      .single()
-
-    let newStreak = 1
-    if (freshProfile) {
-      if (freshProfile.last_active_date === today) {
-        newStreak = freshProfile.streak_count
-      } else if (freshProfile.last_active_date === yesterday) {
-        newStreak = freshProfile.streak_count + 1
-      }
+  if (!user || !message) return
+  
+  const today = new Date().toISOString().split('T')[0]
+  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+  
+  const { data: freshProfile } = await supabase
+    .from('profiles')
+    .select('total_xp, streak_count, last_active_date')
+    .eq('id', user.id)
+    .single()
+  let newStreak = 1
+  if (freshProfile) {
+    if (freshProfile.last_active_date === today) {
+      newStreak = freshProfile.streak_count
+    } else if (freshProfile.last_active_date === yesterday) {
+      newStreak = freshProfile.streak_count + 1
     }
-
-    await supabase.from('history').insert({
-      user_id: user.id,
-      message_id: message.id,
-      beneficiary_name: selectedBeneficiary?.first_name || 'Nespecificat',
-      created_at: new Date().toISOString(),
-    })
-
-    await supabase.from('profiles').update({
-      total_xp: (freshProfile?.total_xp || 0) + 10,
-      streak_count: newStreak,
-      last_active_date: today,
-    }).eq('id', user.id)
-
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(editedContent)}`
-    window.open(whatsappUrl, '_blank')
-    
-    toast.success('Trimis pe WhatsApp! +10 XP 🌟')
-    router.push('/biblioteca')
   }
+  await supabase.from('history').insert({
+    user_id: user.id,
+    message_id: message.id,
+    beneficiary_name: selectedBeneficiary?.first_name || 'Nespecificat',
+    created_at: new Date().toISOString(),
+  })
+  await supabase.from('profiles').update({
+    total_xp: (freshProfile?.total_xp || 0) + 10,
+    streak_count: newStreak,
+    last_active_date: today,
+  }).eq('id', user.id)
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(editedContent)}`
+  
+  // iOS-compatible: Use location.href and remove immediate navigation
+  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+    // iOS: Direct navigation works better
+    window.location.href = whatsappUrl
+  } else {
+    // Desktop/Android: Use window.open
+    window.open(whatsappUrl, '_blank')
+  }
+  
+  toast.success('Trimis pe WhatsApp! +10 XP 🌟')
+  
+  // Remove immediate router.push - let user decide when to leave
+  // Or use a small delay only on non-iOS:
+  // setTimeout(() => router.push('/biblioteca'), 500)
+}
 
   if (loading) {
     return (
