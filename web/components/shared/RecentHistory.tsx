@@ -98,7 +98,7 @@ export function RecentHistory() {
         if (data) {
           console.log('History raw data:', data)
           const validData = data.filter(
-  (item) => item.messages?.id && item.messages?.content
+  (item) => item.messages?.[0]?.id && item.messages?.[0]?.content
 )
           console.log('History after filter:', validData)
           setHistory(validData as unknown as HistoryItem[])
