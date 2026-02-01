@@ -16,7 +16,7 @@ interface HistoryItem {
     id: string
     content: string
     category: string
-  } | null
+  }[] | null
 }
 
 const categoryLabels: Record<string, string> = {
@@ -61,8 +61,8 @@ function formatDate(dateString: string): string {
 }
 
 function HistoryCard({ item }: { item: HistoryItem }) {
-  const categoryColor = getCategoryColor(item.messages?.category || 'personalized')
-  const categoryLabel = categoryLabels[item.messages?.category || 'personalized'] || item.messages?.category
+  const categoryColor = getCategoryColor(item.messages?.[0]?.category || 'personalized')
+  const categoryLabel = categoryLabels[item.messages?.[0]?.category || 'personalized'] || item.messages?.[0]?.category
 
   return (
     <motion.div
@@ -72,7 +72,7 @@ function HistoryCard({ item }: { item: HistoryItem }) {
       className={`glass-card p-4 rounded-2xl border-l-4 ${categoryColor} flex flex-col`}
     >
       <p className="text-sm text-stone-700 mb-3 line-clamp-4 flex-1">
-        &ldquo;{item.messages?.content}&rdquo;
+        &ldquo;{item.messages?.[0]?.content}&rdquo;
       </p>
       <div className="flex justify-between items-center mt-2">
         <span className="text-xs text-stone-500">
@@ -112,20 +112,28 @@ export default function HistoryPage() {
       }
 
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('history')
           .select('id, beneficiary_name, message_id, created_at, messages:message_id(id, content, category)')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(50)
 
+        if (error) throw error
+
         if (data) {
-          console.log('History raw data:', data)
-          const validData = data.filter(
-            (item) => item.messages?.[0]?.id && item.messages?.[0]?.content
-          )
-          console.log('History after filter:', validData)
-          setHistory(validData as unknown as HistoryItem[])
+          console.log('Raw data from Supabase:', data)
+
+          const processedData = data.map((item: any) => {
+            const rawMsg = item.messages
+            const msg = Array.isArray(rawMsg) ? rawMsg[0] : rawMsg
+            return {
+              ...item,
+              messages: msg ? [msg] : null
+            }
+          }).filter(item => item.messages && item.messages[0]?.content)
+
+          setHistory(processedData)
         }
       } catch (error) {
         console.error('Error fetching history:', error)
