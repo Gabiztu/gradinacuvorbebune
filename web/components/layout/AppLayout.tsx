@@ -201,7 +201,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const { loading } = useAuth()
   const { isModalOpen } = useModalOverlay()
-  const mainRef = useRef<HTMLMainElement>(null)
+  const mainRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (mainRef.current) {
