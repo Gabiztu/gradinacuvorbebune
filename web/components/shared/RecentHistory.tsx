@@ -188,7 +188,7 @@ export function RecentHistory() {
         {history.map((item) => {
           const initial = item.beneficiary_name?.charAt(0).toUpperCase() || '?'
           const avatarColor = getAvatarColor(item.beneficiary_name || '')
-          const categoryLabel = categoryLabels[item.messages?.category || ''] || item.messages?.category
+          const categoryLabel = categoryLabels[item.messages?.[0]?.category || ''] || item.messages?.[0]?.category
 
           return (
             <motion.div
@@ -202,7 +202,7 @@ export function RecentHistory() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-stone-800 line-clamp-1 mb-1">
-                  &ldquo;{item.messages?.content}&rdquo;
+                  &ldquo;{item.messages?.[0]?.content}&rdquo;
                 </p>
                 <p className="text-xs text-stone-500">
                   {formatTimeAgo(item.created_at)} • {categoryLabel}
