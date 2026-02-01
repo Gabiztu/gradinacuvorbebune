@@ -16,7 +16,7 @@ interface HistoryItem {
     id: string
     content: string
     category: string
-  } | null
+  }[] | null
 }
 
 const categoryLabels: Record<string, string> = {
@@ -88,20 +88,28 @@ export function RecentHistory() {
     const fetchHistory = async () => {
       try {
         const supabase = createClient()
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('history')
           .select('id, beneficiary_name, message_id, created_at, messages:message_id(id, content, category)')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(3)
 
+        if (error) throw error
+
         if (data) {
-          console.log('History raw data:', data)
-          const validData = data.filter(
-            (item) => item.messages?.[0]?.id && item.messages?.[0]?.content
-          )
-          console.log('History after filter:', validData)
-          setHistory(validData as unknown as HistoryItem[])
+          console.log('Raw data from Supabase:', data)
+
+          const processedData = data.map((item: any) => {
+            const rawMsg = item.messages
+            const msg = Array.isArray(rawMsg) ? rawMsg[0] : rawMsg
+            return {
+              ...item,
+              messages: msg ? [msg] : null
+            }
+          }).filter(item => item.messages && item.messages[0]?.content)
+
+          setHistory(processedData)
         }
       } catch (error) {
         console.error('Error fetching history:', error)
@@ -188,7 +196,7 @@ export function RecentHistory() {
         {history.map((item) => {
           const initial = item.beneficiary_name?.charAt(0).toUpperCase() || '?'
           const avatarColor = getAvatarColor(item.beneficiary_name || '')
-          const categoryLabel = categoryLabels[item.messages?.category || ''] || item.messages?.category
+          const categoryLabel = categoryLabels[item.messages?.[0]?.category || ''] || item.messages?.[0]?.category
 
           return (
             <motion.div
@@ -202,7 +210,7 @@ export function RecentHistory() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-stone-800 line-clamp-1 mb-1">
-                  &ldquo;{item.messages?.content}&rdquo;
+                  &ldquo;{item.messages?.[0]?.content}&rdquo;
                 </p>
                 <p className="text-xs text-stone-500">
                   {formatTimeAgo(item.created_at)} • {categoryLabel}
