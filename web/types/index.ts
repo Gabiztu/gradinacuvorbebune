@@ -10,6 +10,7 @@ export type MessageCategory =
 export interface Profile {
   id: string
   role: UserRole
+  is_admin?: boolean
   total_xp: number
   streak_count: number
   last_active_date: string | null
