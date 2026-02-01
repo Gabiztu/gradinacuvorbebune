@@ -118,21 +118,27 @@ export default function DashboardPage() {
       created_at: new Date().toISOString(),
     })
 
+    await supabase.from('message_usage').insert({
+      user_id: user.id,
+      message_id: dailyMessage.id,
+      action_type: 'share',
+      beneficiary_age_range: selectedBeneficiary?.age_range,
+      user_role: profile?.role || 'parent',
+    })
+
     await supabase.from('profiles').update({
       total_xp: (freshProfile?.total_xp || 0) + 10,
       streak_count: newStreak,
       last_active_date: today,
     }).eq('id', user.id)
 
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(dailyMessage.content)}`
+    toast.success('Mesaj trimis! +10 XP 🌟')
 
-    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-      window.location.href = whatsappUrl
-    } else {
-      window.open(whatsappUrl, '_blank')
+    if (navigator.share) {
+      await navigator.share({
+        text: dailyMessage.content,
+      })
     }
-
-    toast.success('Trimis pe WhatsApp! +10 XP 🌟')
   }
 
   return (
