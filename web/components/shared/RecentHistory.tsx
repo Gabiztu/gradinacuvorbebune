@@ -86,32 +86,33 @@ export function RecentHistory() {
     }
 
     const fetchHistory = async () => {
-      try {
-        const supabase = createClient()
-        const { data } = await supabase
-          .from('history')
-          .select('id, beneficiary_name, message_id, created_at, messages:message_id(id, content, category)')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(3)
-
-        if (data) {
-          console.log('History raw data:', data)
-          const validData = data.filter(
-  (item) => item.messages?.[0]?.id && item.messages?.[0]?.content
-)
-          console.log('History after filter:', validData)
-          setHistory(validData as unknown as HistoryItem[])
+  try {
+    const supabase = createClient()
+    const { data, error } = await supabase
+      .from('history')
+      .select('id, beneficiary_name, message_id, created_at, messages:message_id(id, content, category)')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(3)
+    if (error) throw error
+    if (data) {
+      console.log('Raw data from Supabase:', data)
+      const processedData = data.map((item: any) => {
+        const rawMsg = item.messages
+        const msg = Array.isArray(rawMsg) ? rawMsg[0] : rawMsg
+        return {
+          ...item,
+          messages: msg ? [msg] : null
         }
-      } catch (error) {
-        console.error('Error fetching history:', error)
-      } finally {
-        setLoading(false)
-      }
+      }).filter(item => item.messages && item.messages[0]?.content)
+      setHistory(processedData)
     }
-
-    fetchHistory()
-  }, [user?.id])
+  } catch (error) {
+    console.error('Error fetching history:', error)
+  } finally {
+    setLoading(false)
+  }
+}
 
   const handleViewAll = () => {
     router.push('/history')
