@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Supabase</title>
+</head>
+<body>
+  <h1>Testing Supabase Connection...</h1>
+  <pre id="output"></pre>
+  
+  <script type="module">
+    const SUPABASE_URL = 'https://xukhmcmpmfrjejyqdkwe.supabase.co'
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1a2htY21wbWZyamVqeXFka3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNTU5MDIsImV4cCI6MjA4MzkzMTkwMn0.er6xD56DtjK_5hJYXcZqQ1CFbW6nJWqscLcWZyhza6I'
+    
+    async function test() {
+      const output = document.getElementById('output')
+      
+      try {
+        // Test 1: Check if we can reach Supabase
+        output.textContent = 'Testing connection...\n'
+        
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/profiles?select=count`, {
+          headers: {
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${ANON_KEY}`
+          }
+        })
+        
+        output.textContent += `Status: ${response.status} ${response.statusText}\n`
+        
+        if (response.ok) {
+          output.textContent += '✅ Connection successful! Supabase is reachable.'
+        } else {
+          const error = await response.text()
+          output.textContent += `❌ Error: ${error}`
+        }
+      } catch (e) {
+        output.textContent += `❌ Network error: ${e.message}`
+      }
+    }
+    
+    test()
+  </script>
+</body>
+</html>
