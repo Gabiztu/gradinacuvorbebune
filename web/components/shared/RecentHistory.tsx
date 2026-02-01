@@ -16,7 +16,7 @@ interface HistoryItem {
     id: string
     content: string
     category: string
-  } | null
+  }[] | null
 }
 
 const categoryLabels: Record<string, string> = {
