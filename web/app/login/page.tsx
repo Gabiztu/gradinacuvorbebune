@@ -23,6 +23,15 @@ export default function LoginPage() {
 
   useEffect(() => {
     setMounted(true)
+
+    // Redirect to home if already logged in
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        router.push('/')
+      }
+    }
+    checkAuth()
   }, [])
 
   const validateEmail = (value: string): string | null => {

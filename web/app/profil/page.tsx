@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useBeneficiary } from '@/contexts/BeneficiaryContext'
@@ -220,6 +221,23 @@ export default function ProfilPage() {
         </h3>
 
         <div className="glass-card rounded-2xl overflow-hidden">
+          {profile?.is_admin && (
+            <Link
+              href="/mgmt-x9f2b8c71"
+              className="w-full p-4 flex items-center justify-between hover:bg-purple-50/50 transition-colors text-left group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <iconify-icon icon="solar:shield-check-linear" width="20" />
+                </div>
+                <span className="text-sm font-medium text-stone-800">
+                  Panou Administrare
+                </span>
+              </div>
+              <iconify-icon icon="solar:alt-arrow-right-linear" class="text-stone-300" />
+            </Link>
+          )}
+
           <button
             onClick={() => setShowPrivacyModal(true)}
             className="w-full p-4 flex items-center justify-between hover:bg-white/40 transition-colors text-left group"

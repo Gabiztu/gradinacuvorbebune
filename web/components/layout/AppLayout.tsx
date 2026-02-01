@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useModalOverlay } from '@/contexts/ModalOverlayContext'
 import { useBeneficiary } from '@/contexts/BeneficiaryContext'
 import { cn } from '@/lib/utils'
-import { ReactNode } from 'react'
+import { ReactNode, useRef, useEffect } from 'react'
 
 const navItems = [
   { href: '/', label: 'Acasă', icon: 'solar:home-smile-linear', key: 'home' },
@@ -201,6 +201,13 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const { loading } = useAuth()
   const { isModalOpen } = useModalOverlay()
+  const mainRef = useRef<HTMLMainElement>(null)
+
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTo(0, 0)
+    }
+  }, [pathname])
 
   const isPublicPage = pathname === '/login' || pathname.startsWith('/auth/')
   const showNav = !loading && !isPublicPage && !!pathname
@@ -221,7 +228,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       >
         {showNav && <MobileHeader />}
         
-        <main className="flex-1 overflow-y-auto">
+        <main ref={mainRef} className="flex-1 overflow-y-auto">
           <div className={cn(
             'pb-[calc(8rem+env(safe-area-inset-bottom))] md:pb-10',
             showNav ? 'p-6 md:p-10' : ''
