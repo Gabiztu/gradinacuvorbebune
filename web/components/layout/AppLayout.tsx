@@ -18,7 +18,7 @@ const navItems = [
 
 const mobileNavItems = [
   { href: '/', label: 'Acasă', icon: 'solar:home-smile-linear', key: 'home' },
-  { href: '/biblioteca', label: 'Cuvinte', icon: 'solar:book-bookmark-linear', key: 'biblioteca' },
+  { href: '/biblioteca', label: 'Bibliotecă', icon: 'solar:book-bookmark-linear', key: 'biblioteca' },
   { href: '/gradina', label: '', icon: 'solar:leaf-linear', key: 'garden', center: true },
   { href: '/beneficiari', label: 'Copii', icon: 'solar:users-group-rounded-linear', key: 'beneficiari' },
   { href: '/profil', label: 'Profil', icon: 'solar:user-circle-linear', key: 'profil' },
@@ -81,7 +81,7 @@ function DesktopSidebar() {
         </nav>
       </div>
 
-      <div className="glass-card p-4 rounded-2xl cursor-pointer hover:bg-white/60">
+      <Link href="/profil" className="glass-card p-4 rounded-2xl cursor-pointer hover:bg-white/60 block">
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="w-10 h-10 rounded-full bg-stone-200 overflow-hidden border border-white">
@@ -101,12 +101,12 @@ function DesktopSidebar() {
             <p className="text-sm font-medium text-stone-800 leading-none">
               {user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'Alex B.'}
             </p>
-            <Link href="/gradina" className="text-xs text-stone-500 mt-1 hover:text-stone-700 transition-colors">
+            <p className="text-xs text-stone-500 mt-1">
               Nivel {profile?.total_xp ? Math.floor(profile.total_xp / 250) + 1 : 4}
-            </Link>
+            </p>
           </div>
         </div>
-      </div>
+      </Link>
     </aside>
   )
 }

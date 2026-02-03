@@ -305,10 +305,11 @@ export default function PersonalizePage({ params }: { params: Promise<{ id: stri
               className="w-10 h-10 rounded-xl border border-green-100 bg-green-50 text-green-600 hover:bg-green-100 flex items-center justify-center transition-all"
               title="Trimite pe WhatsApp"
             >
-              <iconify-icon
-                icon="solar:chat-square-call-linear"
-                width="20"
-              ></iconify-icon>
+              <img
+                src="/images/whatsapp-icon.png"
+                alt="WhatsApp"
+                className="w-10 h-10"
+              />
             </button>
           </div>
         </div>

@@ -7,6 +7,7 @@ import { useFavorites } from '@/contexts/FavoritesContext'
 import { useBeneficiary } from '@/contexts/BeneficiaryContext'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
+import { ScrollableCarousel } from '@/components/ui/ScrollableCarousel'
 import Link from 'next/link'
 import type { Message, MessageCategory } from '@/types'
 import { Plus, X, Star, User } from 'lucide-react'
@@ -110,7 +111,7 @@ function FavoritesCarousel() {
 
   if (loading) {
     return (
-      <div className="flex overflow-x-auto gap-4 pb-4 -mx-6 px-6 md:mx-0 md:px-0 no-scrollbar">
+      <ScrollableCarousel>
         {[1, 2, 3].map((i) => (
           <div
             key={i}
@@ -123,20 +124,20 @@ function FavoritesCarousel() {
             </div>
           </div>
         ))}
-      </div>
+      </ScrollableCarousel>
     )
   }
 
   if (favoritesMessages.length === 0) {
     return (
-      <div className="flex overflow-x-auto gap-4 pb-4 -mx-6 px-6 md:mx-0 md:px-0">
+      <ScrollableCarousel>
         <div className="min-w-[260px] glass-card p-4 rounded-2xl border-l-4 border-l-amber-300 opacity-50">
           <p className="text-sm text-stone-600 mb-3 line-clamp-2 italic">
             Adaugă mesaje la favorite pentru a le vedea aici.
           </p>
           <span className="text-[10px] bg-stone-100 px-2 py-1 rounded text-stone-500">Sfaturi</span>
         </div>
-      </div>
+      </ScrollableCarousel>
     )
   }
 
@@ -147,7 +148,7 @@ function FavoritesCarousel() {
   }
 
   return (
-    <div className="flex overflow-x-auto gap-4 pb-4 -mx-6 px-6 md:mx-0 md:px-0 no-scrollbar">
+    <ScrollableCarousel className="group">
       <AnimatePresence mode="popLayout">
         {favoritesMessages.slice(0, 10).map((message) => (
           <motion.div
@@ -185,7 +186,7 @@ function FavoritesCarousel() {
           </motion.div>
         ))}
       </AnimatePresence>
-    </div>
+    </ScrollableCarousel>
   )
 }
 
