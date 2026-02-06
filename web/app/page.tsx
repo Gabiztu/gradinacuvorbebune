@@ -12,7 +12,6 @@ import { RecentHistory } from '@/components/shared/RecentHistory'
 import { cn } from '@/lib/utils'
 import type { Message } from '@/types'
 import { toast } from 'sonner'
-import { logMessageAction } from '@/lib/message-actions'
 
 export default function DashboardPage() {
   const { user, profile, loading: authLoading } = useAuth()
@@ -119,12 +118,13 @@ export default function DashboardPage() {
       created_at: new Date().toISOString(),
     })
 
-    await logMessageAction(
-      dailyMessage.id,
-      'share',
-      selectedBeneficiary?.age_range,
-      profile?.role || 'parent'
-    )
+    await supabase.from('message_usage').insert({
+      user_id: user.id,
+      message_id: dailyMessage.id,
+      action_type: 'share',
+      beneficiary_age_range: selectedBeneficiary?.age_range,
+      user_role: profile?.role || 'parent',
+    })
 
     await supabase.from('profiles').update({
       total_xp: (freshProfile?.total_xp || 0) + 10,
@@ -251,12 +251,13 @@ export default function DashboardPage() {
                       created_at: new Date().toISOString(),
                     })
 
-                    await logMessageAction(
-                      dailyMessage.id,
-                      'send',
-                      selectedBeneficiary?.age_range,
-                      profile?.role || 'parent'
-                    )
+                    await supabase.from('message_usage').insert({
+                      user_id: user.id,
+                      message_id: dailyMessage.id,
+                      action_type: 'share',
+                      beneficiary_age_range: selectedBeneficiary?.age_range,
+                      user_role: profile?.role || 'parent',
+                    })
 
                     await supabase.from('profiles').update({
                       total_xp: (freshProfile?.total_xp || 0) + 10,

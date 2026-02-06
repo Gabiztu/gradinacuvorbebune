@@ -14,7 +14,6 @@ import { ChevronLeft, User, Share2, Copy, Check, Sparkles, Heart, Star, Users } 
 import { cn, KEYWORDS } from '@/lib/utils'
 import { toast } from 'sonner'
 import type { Beneficiary, Message } from '@/types'
-import { logMessageAction } from '@/lib/message-actions'
 
 export default function MessagePage() {
   const params = useParams()
@@ -70,7 +69,7 @@ export default function MessagePage() {
     fetchData()
   }, [messageId, user])
 
-  const logAnalytics = async (actionType: 'copy' | 'share' | 'send') => {
+  const logAnalytics = async () => {
     if (!user || !message) return
 
     await supabase.from('history').insert({
@@ -79,12 +78,11 @@ export default function MessagePage() {
       beneficiary_name: selectedBeneficiary?.first_name || 'Nespecificat',
     })
 
-    await logMessageAction(
-      message.id,
-      actionType,
-      selectedBeneficiary?.age_range,
-      profile?.role || 'parent'
-    )
+    await supabase.from('analytics_logs').insert({
+      message_id: message.id,
+      sender_role: profile?.role || 'parent',
+      beneficiary_age_range: selectedBeneficiary?.age_range || '8-10',
+    })
 
     const today = new Date().toISOString().split('T')[0]
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
@@ -129,7 +127,7 @@ export default function MessagePage() {
           title: 'Cuvinte de Sus',
           text: text,
         })
-        await logAnalytics('share')
+        await logAnalytics()
         toast.success('Mesaj trimis cu succes! +10 XP')
         router.push('/')
         router.refresh()
@@ -158,9 +156,9 @@ export default function MessagePage() {
           setTimeout(() => setCopyTrigger(false), 500)
         }
         
-          await logAnalytics('copy')
-          toast.success('Mesaj copiat și salvat! +10 XP 🌟')
-          setTimeout(() => {
+        await logAnalytics()
+        toast.success('Mesaj copiat și salvat! +10 XP 🌟')
+        setTimeout(() => {
           router.push('/')
           router.refresh()
         }, 1500)
@@ -187,7 +185,7 @@ export default function MessagePage() {
             setTimeout(() => setCopyTrigger(false), 500)
           }
           
-          await logAnalytics('copy')
+          await logAnalytics()
           toast.success('Mesaj copiat și salvat! +10 XP 🌟')
           setTimeout(() => {
             router.push('/')
