@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
-import { X, Plus, Pencil, Trash2, Search, Users, MessageCircle, Smartphone } from 'lucide-react'
+import { X, Plus, Pencil, Trash2, Search, Users, MessageCircle, Copy, Smartphone, Heart } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Message, MessageCategory } from '@/types'
 import { cn } from '@/lib/utils'
@@ -18,40 +18,28 @@ const categories = [
 ]
 
 type UserStats = {
+  total_users: number
   total_parents: number
   total_teachers: number
-  total_admins: number
-  total_users: number
-  new_users_7_days: number
 }
 
 type MessageStats = {
-  total_copies: number
-  total_sends: number
-  total_whatsapp: number
-  total_actions: number
-  whatsapp_percentage: number
-  copy_percentage: number
+  total_sent_from_history: number
+  total_actions_logs: number
+  whatsapp_percent: number
+  copy_percent: number
+  send_percent: number
 }
 
-type AgeStat = {
-  beneficiary_age_range: string
-  usage_count: number
-  percentage: string
+type TopAgeCategory = {
+  range: string
+  count: number
 }
 
-type TopMessage = {
-  id: string
-  content: string
-  category: string
-  usage_count: number
-}
-
-type AdminData = {
-  user_stats: UserStats[]
-  message_stats: MessageStats[]
-  age_stats: AgeStat[]
-  top_messages: TopMessage[]
+type AdminStats = {
+  user_stats: UserStats
+  message_stats: MessageStats
+  top_age_category: TopAgeCategory
 }
 
 type MessageFormData = {
@@ -59,17 +47,135 @@ type MessageFormData = {
   category: MessageCategory
 }
 
-function StatCard({ 
-  title, 
-  value, 
-  icon: Icon, 
-  trend,
-  color = 'bg-white/60' 
+function SkeletonCard() {
+  return (
+    <div className="glass-card p-6 rounded-3xl border border-white/40 bg-white/60">
+      <div className="flex items-start justify-between mb-4">
+        <div className="w-12 h-12 rounded-xl bg-stone-200 animate-pulse" />
+      </div>
+      <div className="h-9 w-16 bg-stone-200 rounded animate-pulse mb-3" />
+      <div className="h-4 w-28 bg-stone-200 rounded animate-pulse mb-4" />
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <div className="h-4 w-16 bg-stone-200 rounded animate-pulse" />
+          <div className="h-4 w-8 bg-stone-200 rounded animate-pulse" />
+        </div>
+        <div className="h-2 w-full bg-stone-200 rounded-full overflow-hidden">
+          <div className="h-full bg-stone-300 rounded-full" style={{ width: '60%' }} />
+        </div>
+        <div className="flex justify-between items-center mt-3">
+          <div className="h-4 w-16 bg-stone-200 rounded animate-pulse" />
+          <div className="h-4 w-8 bg-stone-200 rounded animate-pulse" />
+        </div>
+        <div className="h-2 w-full bg-stone-200 rounded-full overflow-hidden">
+          <div className="h-full bg-stone-300 rounded-full" style={{ width: '30%' }} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AdminSkeleton() {
+  return (
+    <div className="min-h-screen pb-24">
+      <header className="mb-8">
+        <div className="h-9 w-48 bg-stone-200 rounded animate-pulse mb-2" />
+        <div className="h-5 w-40 bg-stone-200 rounded animate-pulse" />
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+      </div>
+
+      <div className="glass-card p-6 rounded-3xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div className="h-6 w-24 bg-stone-200 rounded animate-pulse" />
+          <div className="flex gap-3">
+            <div className="h-10 w-48 bg-stone-200 rounded-xl animate-pulse" />
+            <div className="h-10 w-36 bg-stone-200 rounded-xl animate-pulse" />
+            <div className="h-10 w-24 bg-stone-200 rounded-xl animate-pulse" />
+          </div>
+        </div>
+
+        <div className="space-y-3 max-h-[500px] overflow-y-auto">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center justify-between p-4 bg-white/60 rounded-xl border border-white/40">
+              <div className="flex-1 min-w-0 mr-4">
+                <div className="h-4 w-full bg-stone-200 rounded animate-pulse mb-2" />
+                <div className="h-5 w-20 bg-stone-200 rounded-full animate-pulse" />
+              </div>
+              <div className="flex gap-2">
+                <div className="w-10 h-10 bg-stone-200 rounded-lg animate-pulse" />
+                <div className="w-10 h-10 bg-stone-200 rounded-lg animate-pulse" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function UserStatsCard({ 
+  stats: userStats 
+}: { 
+  stats: UserStats | null | undefined 
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="glass-card p-6 rounded-3xl border border-white/40 bg-white/60"
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-amber-50">
+          <Users className="w-6 h-6 text-stone-700" />
+        </div>
+      </div>
+      <p className="text-3xl font-bold text-stone-800 mb-3">
+        {userStats?.total_users || 0}
+      </p>
+      <p className="text-sm text-stone-500 font-medium mb-4">Total Utilizatori</p>
+      
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <span className="text-stone-600 text-sm">Părinți</span>
+          <span className="font-semibold text-stone-800">{userStats?.total_parents || 0}</span>
+        </div>
+        <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-rose-400 rounded-full"
+            style={{ width: `${userStats?.total_users ? ((userStats!.total_parents || 0) / userStats!.total_users * 100) : 0}%` }}
+          />
+        </div>
+        
+        <div className="flex justify-between items-center mt-3">
+          <span className="text-stone-600 text-sm">Profesori</span>
+          <span className="font-semibold text-stone-800">{userStats?.total_teachers || 0}</span>
+        </div>
+        <div className="h-2 bg-stone-200 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-blue-400 rounded-full"
+            style={{ width: `${userStats?.total_users ? ((userStats!.total_teachers || 0) / userStats!.total_users * 100) : 0}%` }}
+          />
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+function MessageStatsCard({ 
+  title,
+  value,
+  icon: Icon,
+  color = 'bg-white/60'
 }: { 
   title: string
   value: string | number
   icon: any
-  trend?: string
   color?: string
 }) {
   return (
@@ -82,14 +188,83 @@ function StatCard({
         <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center', color.replace('bg-', 'bg-').replace('60', '50'))}>
           <Icon className="w-6 h-6 text-stone-700" />
         </div>
-        {trend && (
-          <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
-            {trend}
-          </span>
-        )}
       </div>
       <p className="text-3xl font-bold text-stone-800 mb-1">{value}</p>
       <p className="text-sm text-stone-500 font-medium">{title}</p>
+    </motion.div>
+  )
+}
+
+function ActionDistributionCard({ 
+  stats: messageStats 
+}: { 
+  stats: MessageStats | null | undefined 
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="glass-card p-6 rounded-3xl border border-white/40 bg-white/60"
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-green-50">
+          <MessageCircle className="w-6 h-6 text-stone-700" />
+        </div>
+      </div>
+      <p className="text-3xl font-bold text-stone-800 mb-1">
+        {messageStats?.total_sent_from_history || 0}
+      </p>
+      <p className="text-sm text-stone-500 font-medium mb-4">Mesaje Trimise</p>
+      
+      <div className="space-y-3">
+        <div className="flex justify-between items-center">
+          <span className="flex items-center gap-2 text-stone-600 text-sm">
+            <Smartphone className="w-4 h-4" /> WhatsApp
+          </span>
+          <span className="font-semibold text-stone-800">{messageStats?.whatsapp_percent || 0}%</span>
+        </div>
+        
+        <div className="flex justify-between items-center">
+          <span className="flex items-center gap-2 text-stone-600 text-sm">
+            <Copy className="w-4 h-4" /> Copy
+          </span>
+          <span className="font-semibold text-stone-800">{messageStats?.copy_percent || 0}%</span>
+        </div>
+        
+        <div className="flex justify-between items-center">
+          <span className="flex items-center gap-2 text-stone-600 text-sm">
+            <MessageCircle className="w-4 h-4" /> Send
+          </span>
+          <span className="font-semibold text-stone-800">{messageStats?.send_percent || 0}%</span>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+function TopAgeCategoryCard({ 
+  topCategory 
+}: { 
+  topCategory: TopAgeCategory | null | undefined 
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="glass-card p-6 rounded-3xl border border-white/40 bg-white/60"
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-rose-50">
+          <Heart className="w-6 h-6 text-stone-700" />
+        </div>
+      </div>
+      <p className="text-3xl font-bold text-stone-800 mb-1">
+        {topCategory?.range || 'N/A'}
+      </p>
+      <p className="text-sm text-stone-500 font-medium mb-1">Top Beneficiari</p>
+      <p className="text-xs text-stone-400">
+        {topCategory?.count || 0} mesaje trimise
+      </p>
     </motion.div>
   )
 }
@@ -209,7 +384,8 @@ function MessageModal({
 function ConfirmDeleteModal({ 
   isOpen, 
   onClose, 
-  onConfirm 
+  onConfirm, 
+  message 
 }: { 
   isOpen: boolean
   onClose: () => void
@@ -245,10 +421,8 @@ function ConfirmDeleteModal({
               <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
                 <Trash2 className="w-8 h-8 text-red-600" />
               </div>
-              <h3 className="text-lg font-semibold text-stone-800 mb-2">Ștergi Mesajul?</h3>
-              <p className="text-stone-500 text-sm">
-                Această acțiune nu poate fi inversată. Mesajul va fi dezactivat.
-              </p>
+              <h3 className="text-lg font-semibold text-stone-800 mb-2">Șterge mesajul?</h3>
+              <p className="text-stone-500 text-sm">Această acțiune nu poate fi anulată.</p>
             </div>
 
             <div className="flex gap-3">
@@ -273,13 +447,20 @@ function ConfirmDeleteModal({
   )
 }
 
+const categoryLabels: Record<string, string> = {
+  school_harmony: 'Armonie la școală',
+  exams_tests: 'Examene și teste',
+  family_reconnection: 'Reconectare familială',
+  overcoming_failure: 'Depășirea eșecului',
+}
+
 export default function AdminPage() {
   const router = useRouter()
   const { user, profile, loading: authLoading } = useAuth()
   const supabase = createClient()
 
-  const [loading, setLoading] = useState(true)
-  const [adminData, setAdminData] = useState<AdminData | null>(null)
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
+  const [stats, setStats] = useState<AdminStats | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
@@ -291,14 +472,14 @@ export default function AdminPage() {
   const [deletingMessage, setDeletingMessage] = useState<Message | null>(null)
 
   useEffect(() => {
+    if (authLoading) return
+
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
     const checkAdmin = async () => {
-      if (authLoading) return
-
-      if (!user) {
-        router.push('/login')
-        return
-      }
-
       const { data: profileData } = await supabase
         .from('profiles')
         .select('is_admin, role')
@@ -310,25 +491,30 @@ export default function AdminPage() {
         return
       }
 
-      setLoading(false)
+      setIsAdmin(true)
     }
 
     checkAdmin()
   }, [user, authLoading, router, supabase])
 
   useEffect(() => {
-    if (!loading) {
+    if (isAdmin) {
       fetchAdminData()
       fetchMessages()
     }
-  }, [loading])
+  }, [isAdmin])
 
   const fetchAdminData = async () => {
     try {
       const { data, error } = await supabase.rpc('get_admin_stats')
-      if (error) throw error
+      
+      if (error) {
+        console.error('Error fetching admin stats:', error)
+        return
+      }
+      
       if (data) {
-        setAdminData(data as AdminData)
+        setStats(data as AdminStats)
       }
     } catch (error) {
       console.error('Error fetching admin stats:', error)
@@ -340,6 +526,7 @@ export default function AdminPage() {
       const { data } = await supabase
         .from('messages')
         .select('*')
+        .eq('is_active', true)
         .order('created_at', { ascending: false })
 
       if (data) {
@@ -358,11 +545,16 @@ export default function AdminPage() {
           .update({
             content: formData.content,
             category: formData.category,
+            age_range: ['8-10', '11-13', '14-16', '17-20'],
+            role_target: ['parent', 'teacher'],
             updated_at: new Date().toISOString()
           })
           .eq('id', editingMessage.id)
 
-        if (error) throw error
+        if (error) {
+          console.error('Supabase error:', error.message, error.details)
+          throw new Error(error.message)
+        }
         toast.success('Mesaj actualizat!')
       } else {
         const { error } = await supabase
@@ -370,10 +562,15 @@ export default function AdminPage() {
           .insert({
             content: formData.content,
             category: formData.category,
+            age_range: ['8-10', '11-13', '14-16', '17-20'],
+            role_target: ['parent', 'teacher'],
             is_active: true
           })
 
-        if (error) throw error
+        if (error) {
+          console.error('Supabase error:', error.message, error.details)
+          throw new Error(error.message)
+        }
         toast.success('Mesaj creat!')
       }
 
@@ -431,19 +628,8 @@ export default function AdminPage() {
     return matchesSearch && matchesCategory
   })
 
-  const userStats = adminData?.user_stats?.[0]
-  const messageStats = adminData?.message_stats?.[0]
-  const topAgeCategory = adminData?.age_stats?.[0]
-
-  if (authLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse">
-          <div className="h-8 w-32 bg-stone-200 rounded mb-2" />
-          <div className="h-6 w-48 bg-stone-200 rounded" />
-        </div>
-      </div>
-    )
+  if (authLoading || isAdmin === null) {
+    return <AdminSkeleton />
   }
 
   return (
@@ -455,88 +641,41 @@ export default function AdminPage() {
         <p className="text-stone-500">Panou de control și statistici</p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard
-          title="Total Utilizatori"
-          value={userStats?.total_users || 0}
-          icon={Users}
-          trend={`+${userStats?.new_users_7_days || 0} în 7 zile`}
-        />
-        <StatCard
-          title="Acțiuni Totale"
-          value={messageStats?.total_actions || 0}
-          icon={MessageCircle}
-        />
-        <StatCard
-          title="Categorii Populare"
-          value={topAgeCategory?.beneficiary_age_range || 'N/A'}
-          icon={Users}
-          trend={`${topAgeCategory?.percentage || 0}%`}
-        />
-        <StatCard
-          title="WhatsApp vs Copy"
-          value={`${Math.round(messageStats?.whatsapp_percentage || 0)}% / ${Math.round(messageStats?.copy_percentage || 0)}%`}
-          icon={Smartphone}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="glass-card p-6 rounded-3xl">
-          <h3 className="text-lg font-semibold text-stone-800 mb-4">Distribuție Utilizatori</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-stone-600">Părinți</span>
-              <span className="font-semibold text-stone-800">{userStats?.total_parents || 0}</span>
-            </div>
-            <div className="h-3 bg-stone-200 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-rose-400 rounded-full"
-                style={{ width: `${userStats?.total_users ? (userStats!.total_parents / userStats!.total_users) * 100 : 0}%` }}
+      <AnimatePresence mode="wait">
+        {stats ? (
+          <motion.div
+            key="stats-loaded"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <UserStatsCard stats={stats?.user_stats} />
+              <MessageStatsCard
+                title="Mesaje Trimise"
+                value={stats?.message_stats?.total_sent_from_history || 0}
+                icon={MessageCircle}
+                color="bg-white/60"
               />
+              <ActionDistributionCard stats={stats?.message_stats} />
+              <TopAgeCategoryCard topCategory={stats?.top_age_category} />
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-stone-600">Profesori</span>
-              <span className="font-semibold text-stone-800">{userStats?.total_teachers || 0}</span>
-            </div>
-            <div className="h-3 bg-stone-200 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-blue-400 rounded-full"
-                style={{ width: `${userStats?.total_users ? (userStats!.total_teachers / userStats!.total_users) * 100 : 0}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="glass-card p-6 rounded-3xl">
-          <h3 className="text-lg font-semibold text-stone-800 mb-4">Canal Preferat</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-stone-600 flex items-center gap-2">
-                <Smartphone className="w-4 h-4" /> WhatsApp
-              </span>
-              <span className="font-semibold text-stone-800">{messageStats?.total_whatsapp || 0}</span>
-            </div>
-            <div className="h-3 bg-stone-200 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-green-400 rounded-full"
-                style={{ width: `${messageStats?.whatsapp_percentage || 0}%` }}
-              />
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-stone-600 flex items-center gap-2">
-                <MessageCircle className="w-4 h-4" /> Copy
-              </span>
-              <span className="font-semibold text-stone-800">{messageStats?.total_copies || 0}</span>
-            </div>
-            <div className="h-3 bg-stone-200 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-amber-400 rounded-full"
-                style={{ width: `${messageStats?.copy_percentage || 0}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="stats-loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+          >
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="glass-card p-6 rounded-3xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -587,12 +726,14 @@ export default function AdminPage() {
               >
                 <div className="flex-1 min-w-0 mr-4">
                   <p className="text-sm text-stone-700 line-clamp-2">{message.content}</p>
-                  <span className={cn(
-                    'inline-block mt-2 px-2 py-0.5 rounded-full text-[10px] font-medium border',
-                    categories.find(c => c.key === message.category)?.color || 'bg-stone-100 text-stone-600'
-                  )}>
-                    {categoryLabels[message.category] || message.category}
-                  </span>
+                  {message.category !== 'personalized' && (
+                    <span className={cn(
+                      'inline-block mt-2 px-2 py-0.5 rounded-full text-[10px] font-medium border',
+                      categories.find(c => c.key === message.category)?.color || 'bg-stone-100 text-stone-600'
+                    )}>
+                      {categoryLabels[message.category] || message.category}
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -635,12 +776,4 @@ export default function AdminPage() {
       />
     </div>
   )
-}
-
-const categoryLabels: Record<string, string> = {
-  school_harmony: 'Armonie la școală',
-  exams_tests: 'Examene și teste',
-  family_reconnection: 'Reconectare familială',
-  overcoming_failure: 'Depășirea eșecului',
-  personalized: 'Personalizat',
 }

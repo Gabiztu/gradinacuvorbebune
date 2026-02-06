@@ -10,12 +10,13 @@ import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Message } from '@/types'
 import { BeneficiaryBadge } from '@/components/shared/BeneficiaryBadge'
+import { logMessageAction } from '@/lib/message-actions'
 
 export default function PersonalizePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user, profile } = useAuth()
+  const { user, profile, refreshProfile } = useAuth()
   const { beneficiaries, selectedBeneficiary, setSelectedBeneficiary } = useBeneficiary()
   const supabase = createClient()
 
@@ -109,13 +110,12 @@ export default function PersonalizePage({ params }: { params: Promise<{ id: stri
       created_at: new Date().toISOString(),
     })
 
-    await supabase.from('message_usage').insert({
-      user_id: user.id,
-      message_id: message.id,
-      action_type: 'whatsapp',
-      beneficiary_age_range: selectedBeneficiary?.age_range,
-      user_role: profile?.role || 'parent',
-    })
+    await logMessageAction(
+      message.id,
+      'send',
+      selectedBeneficiary?.age_range,
+      profile?.role || 'parent'
+    )
 
     await supabase.from('profiles').update({
         total_xp: (freshProfile?.total_xp || 0) + 10,
@@ -123,6 +123,7 @@ export default function PersonalizePage({ params }: { params: Promise<{ id: stri
         last_active_date: today,
       }).eq('id', user.id)
 
+      await refreshProfile()
       toast.success('Mesaj trimis! +10 XP 🌟')
 
       if (navigator.share) {
@@ -176,13 +177,13 @@ export default function PersonalizePage({ params }: { params: Promise<{ id: stri
       last_active_date: today,
     }).eq('id', user.id)
 
-    await supabase.from('message_usage').insert({
-      user_id: user.id,
-      message_id: message.id,
-      action_type: 'copy',
-      beneficiary_age_range: selectedBeneficiary?.age_range,
-      user_role: profile?.role || 'parent',
-    })
+    await refreshProfile()
+    await logMessageAction(
+      message.id,
+      'copy',
+      selectedBeneficiary?.age_range,
+      profile?.role || 'parent'
+    )
 
     toast.success('Copiat! +10 XP 🌟')
     router.push('/biblioteca')
@@ -213,11 +214,21 @@ export default function PersonalizePage({ params }: { params: Promise<{ id: stri
     beneficiary_name: selectedBeneficiary?.first_name || 'Nespecificat',
     created_at: new Date().toISOString(),
   })
+
+  await logMessageAction(
+    message.id,
+    'share',
+    selectedBeneficiary?.age_range,
+    profile?.role || 'parent'
+  )
+
   await supabase.from('profiles').update({
     total_xp: (freshProfile?.total_xp || 0) + 10,
     streak_count: newStreak,
     last_active_date: today,
   }).eq('id', user.id)
+
+  await refreshProfile()
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(editedContent)}`
   
   // iOS-compatible: Use location.href and remove immediate navigation

@@ -30,7 +30,7 @@ function getPageKey(pathname: string): string {
   if (pathname.startsWith('/message/personalize')) return 'biblioteca'
   if (pathname.startsWith('/gradina')) return 'gradina'
   if (pathname.startsWith('/beneficiari')) return 'beneficiari'
-  if (pathname.startsWith('/profil')) return 'profil'
+  if (pathname.startsWith('/profil') || pathname.startsWith('/mgmt')) return 'profil'
   if (pathname.startsWith('/mesaj')) return 'mesaj'
   return 'home'
 }
