@@ -28,6 +28,7 @@ export function PasswordInput({
       <label className="block text-sm font-medium text-stone-700 ml-1">{label}</label>
       <div className="relative group">
         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400 group-focus-within:text-stone-600 transition-colors" />
+        
         <input
           type="text"
           inputMode="text"
@@ -36,10 +37,13 @@ export function PasswordInput({
           onChange={field.onChange}
           onBlur={onBlur}
           className={`w-full pl-12 pr-12 py-3.5 bg-white/60 backdrop-blur-lg border rounded-xl focus:outline-none transition-all ${
-            error ? 'border-red-300 focus:border-red-500' : 'border-white/40 focus:border-stone-400/50'
+            error && touched
+              ? 'border-red-300 focus:border-red-500'
+              : 'border-white/40 focus:border-stone-400/50'
           }`}
           placeholder={placeholder}
         />
+        
         <button
           type="button"
           onPointerDown={field.showPassword}

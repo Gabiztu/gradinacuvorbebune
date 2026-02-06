@@ -68,6 +68,10 @@ export function AuthForm() {
     }
   }
 
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    confirmPasswordField.onChange(e)
+  }
+
   const setPasswordError = (err: string | null) => {
     if (isSignUp) {
       setEmailError(err)
@@ -77,7 +81,7 @@ export function AuthForm() {
   const isFormValid = () => {
     const password = passwordField.getValue()
     if (isSignUp) {
-      return email && password.length >= 6 && !validateEmail(email) && !validatePassword(password)
+      return email && password.length >= 6 && !validateEmail(email) && !validatePassword(password) && confirmPasswordField.getValue() === password
     }
     return email && password.length >= 6
   }
@@ -281,7 +285,7 @@ export function AuthForm() {
               field={passwordField}
               label="Parolă"
               placeholder="••••••••"
-              error={isSignUp ? null : null}
+              error={null}
               touched={touched.password}
               onBlur={handlePasswordBlur}
             />

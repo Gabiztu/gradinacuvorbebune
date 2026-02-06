@@ -12,9 +12,10 @@ import { RecentHistory } from '@/components/shared/RecentHistory'
 import { cn } from '@/lib/utils'
 import type { Message } from '@/types'
 import { toast } from 'sonner'
+import { logMessageAction } from '@/lib/message-actions'
 
 export default function DashboardPage() {
-  const { user, profile, loading: authLoading } = useAuth()
+  const { user, profile, loading: authLoading, refreshProfile } = useAuth()
   const { selectedBeneficiary } = useBeneficiary()
   const { favoritesMessages } = useFavorites()
   const router = useRouter()
@@ -24,7 +25,7 @@ export default function DashboardPage() {
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const xp = profile?.total_xp || 0
-  const streak = profile?.streak_count || 12
+  const streak = profile?.streak_count || 0
 
   useEffect(() => {
     setMounted(true)
@@ -118,13 +119,12 @@ export default function DashboardPage() {
       created_at: new Date().toISOString(),
     })
 
-    await supabase.from('message_usage').insert({
-      user_id: user.id,
-      message_id: dailyMessage.id,
-      action_type: 'share',
-      beneficiary_age_range: selectedBeneficiary?.age_range,
-      user_role: profile?.role || 'parent',
-    })
+                      await logMessageAction(
+                        dailyMessage.id,
+                        'send',
+                        selectedBeneficiary?.age_range,
+                        profile?.role || 'parent'
+                      )
 
     await supabase.from('profiles').update({
       total_xp: (freshProfile?.total_xp || 0) + 10,
@@ -132,6 +132,7 @@ export default function DashboardPage() {
       last_active_date: today,
     }).eq('id', user.id)
 
+    await refreshProfile()
     toast.success('Mesaj trimis! +10 XP 🌟')
 
     if (navigator.share) {
@@ -251,13 +252,12 @@ export default function DashboardPage() {
                       created_at: new Date().toISOString(),
                     })
 
-                    await supabase.from('message_usage').insert({
-                      user_id: user.id,
-                      message_id: dailyMessage.id,
-                      action_type: 'share',
-                      beneficiary_age_range: selectedBeneficiary?.age_range,
-                      user_role: profile?.role || 'parent',
-                    })
+                    await logMessageAction(
+                      dailyMessage.id,
+                      'send',
+                      selectedBeneficiary?.age_range,
+                      profile?.role || 'parent'
+                    )
 
                     await supabase.from('profiles').update({
                       total_xp: (freshProfile?.total_xp || 0) + 10,
@@ -265,6 +265,7 @@ export default function DashboardPage() {
                       last_active_date: today,
                     }).eq('id', user.id)
 
+                    await refreshProfile()
                     toast.success('Mesaj trimis! +10 XP 🌟')
 
                     if (navigator.share) {

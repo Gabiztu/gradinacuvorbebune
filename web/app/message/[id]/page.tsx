@@ -19,7 +19,7 @@ export default function MessagePage() {
   const params = useParams()
   const router = useRouter()
   const messageId = params.id as string
-  const { user, profile } = useAuth()
+  const { user, profile, refreshProfile } = useAuth()
   const supabase = createClient()
 
   const [message, setMessage] = useState<Message | null>(null)
@@ -112,6 +112,8 @@ export default function MessagePage() {
         last_active_date: today,
       })
       .eq('id', user.id)
+
+    await refreshProfile()
   }
 
   const canShare = typeof navigator !== 'undefined' && 'share' in navigator && navigator.share

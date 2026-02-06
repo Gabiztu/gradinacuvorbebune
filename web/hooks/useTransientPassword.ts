@@ -8,61 +8,36 @@ export function useTransientPassword(uniqueId: string) {
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    realPasswordRef.current = ''
-    setDisplayValue('')
-    setIsHolding(false)
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-      timerRef.current = null
-    }
+    realPasswordRef.current = ''; setDisplayValue(''); setIsHolding(false);
+    if (timerRef.current) clearTimeout(timerRef.current)
   }, [uniqueId])
-
-  useEffect(() => {
-    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value
     const inputLength = inputValue.length
     const realLength = realPasswordRef.current.length
 
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-      timerRef.current = null
-    }
+    if (timerRef.current) clearTimeout(timerRef.current)
 
     if (inputLength > realLength) {
       const addedChars = inputValue.slice(realLength)
       realPasswordRef.current += addedChars
       setDisplayValue('•'.repeat(realLength) + addedChars)
-      
       timerRef.current = setTimeout(() => {
         setDisplayValue('•'.repeat(realPasswordRef.current.length))
       }, 1000)
-    } else if (inputLength < realLength) {
+    } else {
       realPasswordRef.current = realPasswordRef.current.slice(0, inputLength)
       setDisplayValue('•'.repeat(inputLength))
     }
   }, [])
 
-  const showPassword = useCallback(() => {
-    setIsHolding(true)
-    setDisplayValue(realPasswordRef.current)
-  }, [])
-
-  const hidePassword = useCallback(() => {
-    setIsHolding(false)
-    setDisplayValue('•'.repeat(realPasswordRef.current.length))
-  }, [])
-
-  const getValue = useCallback(() => realPasswordRef.current, [])
-
   return {
     value: isHolding ? realPasswordRef.current : displayValue,
     onChange: handleChange,
-    showPassword,
-    hidePassword,
-    getValue,
+    getValue: () => realPasswordRef.current,
+    showPassword: () => { setIsHolding(true); setDisplayValue(realPasswordRef.current); },
+    hidePassword: () => { setIsHolding(false); setDisplayValue('•'.repeat(realPasswordRef.current.length)); },
     isHolding
   }
 }
