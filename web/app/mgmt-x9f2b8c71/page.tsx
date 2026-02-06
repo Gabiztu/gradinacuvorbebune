@@ -211,10 +211,6 @@ function ActionDistributionCard({
           <MessageCircle className="w-6 h-6 text-stone-700" />
         </div>
       </div>
-      <p className="text-3xl font-bold text-stone-800 mb-1">
-        {messageStats?.total_sent_from_history || 0}
-      </p>
-      <p className="text-sm text-stone-500 font-medium mb-4">Mesaje Trimise</p>
       
       <div className="space-y-3">
         <div className="flex justify-between items-center">

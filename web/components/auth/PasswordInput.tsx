@@ -1,7 +1,8 @@
 'use client'
+import { memo, useState } from 'react'
 import { Lock } from 'lucide-react'
 
-export function PasswordInput({
+export const PasswordInput = memo(function PasswordInput({
   field,
   label = 'Parolă',
   placeholder = '••••••••',
@@ -23,6 +24,8 @@ export function PasswordInput({
   touched?: boolean
   onBlur?: () => void
 }) {
+  const [isFocused, setIsFocused] = useState(false)
+
   return (
     <div className="space-y-2">
       <label className="block text-sm font-medium text-stone-700 ml-1">{label}</label>
@@ -33,10 +36,20 @@ export function PasswordInput({
           type="text"
           inputMode="text"
           autoComplete="off"
+          spellCheck="false"
+          autoCorrect="off"
           value={field.value}
           onChange={field.onChange}
-          onBlur={onBlur}
-          className={`w-full pl-12 pr-12 py-3.5 bg-white/60 backdrop-blur-lg border rounded-xl focus:outline-none transition-all ${
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => {
+            setIsFocused(false)
+            onBlur?.()
+          }}
+          className={`w-full pl-12 pr-12 py-3.5 border rounded-xl focus:outline-none transition-all ${
+            isFocused
+              ? 'bg-white'
+              : 'bg-white/60 backdrop-blur-lg'
+          } ${
             error && touched
               ? 'border-red-300 focus:border-red-500'
               : 'border-white/40 focus:border-stone-400/50'
@@ -57,4 +70,4 @@ export function PasswordInput({
       {error && touched && <p className="ml-1 text-sm text-red-500">{error}</p>}
     </div>
   )
-}
+})

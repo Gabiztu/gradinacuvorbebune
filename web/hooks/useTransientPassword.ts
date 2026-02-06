@@ -3,26 +3,32 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 
 export function useTransientPassword(uniqueId: string) {
   const realPasswordRef = useRef('')
+  const prevLengthRef = useRef(0)
   const [displayValue, setDisplayValue] = useState('')
   const [isHolding, setIsHolding] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    realPasswordRef.current = ''; setDisplayValue(''); setIsHolding(false);
+    realPasswordRef.current = ''
+    prevLengthRef.current = 0
+    setDisplayValue('')
+    setIsHolding(false)
     if (timerRef.current) clearTimeout(timerRef.current)
   }, [uniqueId])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value
     const inputLength = inputValue.length
-    const realLength = realPasswordRef.current.length
+
+    if (inputLength === prevLengthRef.current) return
+    prevLengthRef.current = inputLength
 
     if (timerRef.current) clearTimeout(timerRef.current)
 
-    if (inputLength > realLength) {
-      const addedChars = inputValue.slice(realLength)
+    if (inputLength > realPasswordRef.current.length) {
+      const addedChars = inputValue.slice(realPasswordRef.current.length)
       realPasswordRef.current += addedChars
-      setDisplayValue('•'.repeat(realLength) + addedChars)
+      setDisplayValue('•'.repeat(realPasswordRef.current.length - 1) + addedChars)
       timerRef.current = setTimeout(() => {
         setDisplayValue('•'.repeat(realPasswordRef.current.length))
       }, 1000)
