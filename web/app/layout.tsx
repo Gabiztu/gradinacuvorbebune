@@ -9,6 +9,7 @@ import { ModalOverlayProvider } from '@/contexts/ModalOverlayContext'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { AmbientBackground } from '@/components/ui/AmbientBackground'
 import { HydrationGuard } from '@/components/ui/HydrationGuard'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 
 const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ['latin'],
@@ -50,11 +51,23 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               window.addEventListener('error', function(e) {
-                if (e.filename && !e.filename.includes('_next/')) {
-                  e.preventDefault();
-                  console.warn('External script error suppressed:', e.filename);
+                if (e.filename && !e.filename.includes(location.hostname)) {
+                  e.preventDefault(); return false;
+                }
+                if (e.message && (e.message.includes('chunk') || e.message.includes('Unexpected token'))) {
+                  var last = sessionStorage.getItem('chunk-reload');
+                  if (!last || Date.now() - parseInt(last) > 10000) {
+                    sessionStorage.setItem('chunk-reload', Date.now().toString());
+                    window.location.reload();
+                  }
                 }
               }, true);
+
+              window.addEventListener('unhandledrejection', function(e) {
+                if (e.reason && (e.reason.name === 'ChunkLoadError' || (e.reason.message && e.reason.message.includes('dynamically')))) {
+                  window.location.reload();
+                }
+              });
             `,
           }}
         />
@@ -62,18 +75,20 @@ export default function RootLayout({
       </head>
       <body className={`${plusJakartaSans.variable} font-sans antialiased`} suppressHydrationWarning>
         <AmbientBackground />
-        <HydrationGuard>
-          <AuthProvider>
-            <FavoritesProvider>
-              <BeneficiaryProvider>
-                <ModalOverlayProvider>
-                  <AppLayout>{children}</AppLayout>
-                  <Toaster />
-                </ModalOverlayProvider>
-              </BeneficiaryProvider>
-            </FavoritesProvider>
-          </AuthProvider>
-        </HydrationGuard>
+        <ErrorBoundary>
+          <HydrationGuard>
+            <AuthProvider>
+              <FavoritesProvider>
+                <BeneficiaryProvider>
+                  <ModalOverlayProvider>
+                    <AppLayout>{children}</AppLayout>
+                    <Toaster />
+                  </ModalOverlayProvider>
+                </BeneficiaryProvider>
+              </FavoritesProvider>
+            </AuthProvider>
+          </HydrationGuard>
+        </ErrorBoundary>
       </body>
     </html>
   )
