@@ -8,6 +8,7 @@ import { BeneficiaryProvider } from '@/contexts/BeneficiaryContext'
 import { ModalOverlayProvider } from '@/contexts/ModalOverlayContext'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { AmbientBackground } from '@/components/ui/AmbientBackground'
+import { HydrationGuard } from '@/components/ui/HydrationGuard'
 
 const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ['latin'],
@@ -16,9 +17,13 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Empatie - Companion Digital',
-  description: 'Cuvinte motivaționale pentru copii și tineri',
+  title: "Grădina cu Vorbe Bune",
+  description: "Cultivă empatia prin cuvinte",
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icon.svg',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -39,22 +44,36 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ro" className="scroll-smooth">
+    <html lang="ro" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.addEventListener('error', function(e) {
+                if (e.filename && !e.filename.includes('_next/')) {
+                  e.preventDefault();
+                  console.warn('External script error suppressed:', e.filename);
+                }
+              }, true);
+            `,
+          }}
+        />
         <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" async></script>
       </head>
-      <body className={`${plusJakartaSans.variable} font-sans antialiased`}>
+      <body className={`${plusJakartaSans.variable} font-sans antialiased`} suppressHydrationWarning>
         <AmbientBackground />
-        <AuthProvider>
-          <FavoritesProvider>
-            <BeneficiaryProvider>
-              <ModalOverlayProvider>
-                <AppLayout>{children}</AppLayout>
-                <Toaster />
-              </ModalOverlayProvider>
-            </BeneficiaryProvider>
-          </FavoritesProvider>
-        </AuthProvider>
+        <HydrationGuard>
+          <AuthProvider>
+            <FavoritesProvider>
+              <BeneficiaryProvider>
+                <ModalOverlayProvider>
+                  <AppLayout>{children}</AppLayout>
+                  <Toaster />
+                </ModalOverlayProvider>
+              </BeneficiaryProvider>
+            </FavoritesProvider>
+          </AuthProvider>
+        </HydrationGuard>
       </body>
     </html>
   )

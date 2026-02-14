@@ -102,7 +102,7 @@ function DesktopSidebar() {
               {user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'Alex B.'}
             </p>
             <p className="text-xs text-stone-500 mt-1">
-              Nivel {profile?.total_xp ? Math.floor(profile.total_xp / 250) + 1 : 4}
+              Nivel {profile?.total_xp ? Math.floor(profile.total_xp / 250) + 1 : 1}
             </p>
           </div>
         </div>

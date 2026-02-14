@@ -258,7 +258,7 @@ function CustomMessageModal({
                 disabled={!message.trim()}
                 className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-50 font-medium text-sm hover:bg-stone-700 transition-colors disabled:opacity-50"
               >
-                Copiază
+                Trimite
               </button>
             </div>
           </motion.div>
