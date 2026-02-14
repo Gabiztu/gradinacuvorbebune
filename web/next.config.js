@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
+    // Only apply CSP headers in production
+    if (process.env.NODE_ENV !== 'production') {
+      return []
+    }
+
     return [
       {
         // Apply to all routes except static assets

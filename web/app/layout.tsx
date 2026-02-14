@@ -44,11 +44,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ro" className="scroll-smooth">
+    <html lang="ro" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" async></script>
       </head>
-      <body className={`${plusJakartaSans.variable} font-sans antialiased`}>
+      <body className={`${plusJakartaSans.variable} font-sans antialiased`} suppressHydrationWarning>
         <AmbientBackground />
         <HydrationGuard>
           <AuthProvider>
