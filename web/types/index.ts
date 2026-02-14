@@ -69,3 +69,15 @@ export interface GardenState {
   streak: number
   xp: number
 }
+
+export interface ProposedMessage {
+  id: string
+  user_id: string
+  content: string
+  status: 'pending' | 'approved' | 'rejected'
+  created_at: string
+  profiles?: {
+    first_name: string
+    email: string
+  }
+}
