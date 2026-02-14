@@ -46,6 +46,18 @@ export default function RootLayout({
   return (
     <html lang="ro" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.addEventListener('error', function(e) {
+                if (e.filename && !e.filename.includes('_next/')) {
+                  e.preventDefault();
+                  console.warn('External script error suppressed:', e.filename);
+                }
+              }, true);
+            `,
+          }}
+        />
         <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" async></script>
       </head>
       <body className={`${plusJakartaSans.variable} font-sans antialiased`} suppressHydrationWarning>
