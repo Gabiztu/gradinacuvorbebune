@@ -5,12 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams } from 'next/navigation'
 import { useFavorites } from '@/contexts/FavoritesContext'
 import { useBeneficiary } from '@/contexts/BeneficiaryContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import { ScrollableCarousel } from '@/components/ui/ScrollableCarousel'
 import Link from 'next/link'
 import type { Message, MessageCategory } from '@/types'
 import { Plus, X, Star, User } from 'lucide-react'
+import { toast } from 'sonner'
 
 const categories = [
   {
@@ -198,12 +200,35 @@ function CustomMessageModal({
   onClose: () => void
 }) {
   const [message, setMessage] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const { user, profile } = useAuth()
   const { selectedBeneficiary } = useBeneficiary()
+  const supabase = createClient()
 
-  const handleCopy = () => {
-    if (!message.trim()) return
-    navigator.clipboard.writeText(message)
-    onClose()
+  const handleSubmit = async () => {
+    if (!message.trim() || !user) return
+
+    setSubmitting(true)
+    try {
+      const { error } = await supabase
+        .from('proposed_messages')
+        .insert({
+          user_id: user.id,
+          content: message.trim(),
+          status: 'pending',
+        })
+
+      if (error) throw error
+
+      toast.success('Mesajul tău a fost trimis!')
+      setMessage('')
+      onClose()
+    } catch (err) {
+      console.error('Error submitting message:', err)
+      toast.error('A apărut o eroare. Încearcă din nou.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -242,7 +267,7 @@ function CustomMessageModal({
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Scrie mesajul tău aici..."
+              placeholder="Scrie mesajul tău aici... (Va fi revizuit de un moderator înainte de publicare)"
               className="w-full h-40 p-4 rounded-xl bg-white/60 border border-white focus:outline-none focus:ring-2 focus:ring-stone-200 resize-none text-stone-700"
             />
 
@@ -254,11 +279,11 @@ function CustomMessageModal({
                 Anulează
               </button>
               <button
-                onClick={handleCopy}
-                disabled={!message.trim()}
+                onClick={handleSubmit}
+                disabled={!message.trim() || submitting}
                 className="flex-1 py-3 rounded-xl bg-stone-800 text-stone-50 font-medium text-sm hover:bg-stone-700 transition-colors disabled:opacity-50"
               >
-                Trimite
+                {submitting ? 'Se trimite...' : 'Trimite'}
               </button>
             </div>
           </motion.div>

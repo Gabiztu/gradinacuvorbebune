@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { X, Plus, Pencil, Trash2, Search, Users, MessageCircle, Copy, Smartphone, Heart } from 'lucide-react'
 import { toast } from 'sonner'
-import type { Message, MessageCategory } from '@/types'
+import type { Message, MessageCategory, ProposedMessage } from '@/types'
 import { cn } from '@/lib/utils'
 
 const categories = [
@@ -443,6 +443,130 @@ function ConfirmDeleteModal({
   )
 }
 
+function ProposalCard({
+  proposal,
+  onApprove,
+  onReject,
+  onEdit,
+}: {
+  proposal: ProposedMessage
+  onApprove: (proposal: ProposedMessage, category: string) => void
+  onReject: (proposal: ProposedMessage) => void
+  onEdit: (proposal: ProposedMessage, newContent: string) => void
+}) {
+  const [category, setCategory] = useState('school_harmony')
+  const [isEditing, setIsEditing] = useState(false)
+  const [editContent, setEditContent] = useState(proposal.content || '')
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (!isEditing) {
+      setEditContent(proposal.content || '')
+    }
+  }, [proposal.content, isEditing])
+
+  const handleSaveEdit = async () => {
+    setSaving(true)
+    await onEdit(proposal, editContent)
+    setSaving(false)
+    setIsEditing(false)
+  }
+
+  const getSenderInitials = () => {
+    const name = proposal.profiles?.first_name || proposal.profiles?.email || 'U'
+    return name.charAt(0).toUpperCase()
+  }
+
+  const timeAgo = (date: string) => {
+    const diff = Date.now() - new Date(date).getTime()
+    const minutes = Math.floor(diff / 60000)
+    if (minutes < 60) return `${minutes}m`
+    const hours = Math.floor(minutes / 60)
+    if (hours < 24) return `${hours}h`
+    const days = Math.floor(hours / 24)
+    return `${days}z`
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      className="glass-card p-6 rounded-[32px] bg-white/45 backdrop-blur-xl border border-white/40"
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-300 to-rose-300 flex items-center justify-center text-white text-xs font-medium">
+            {getSenderInitials()}
+          </div>
+          <div>
+            <p className="text-sm font-medium text-stone-800">
+              {proposal.profiles?.first_name || proposal.profiles?.email?.split('@')[0] || 'Utilizator'}
+            </p>
+            <p className="text-xs text-stone-400">{timeAgo(proposal.created_at)}</p>
+          </div>
+        </div>
+      </div>
+
+      {isEditing ? (
+        <textarea
+          value={editContent}
+          onChange={(e) => setEditContent(e.target.value)}
+          className="w-full h-24 p-3 rounded-xl bg-white/60 border border-stone-200 text-stone-700 text-sm mb-4"
+        />
+      ) : (
+        <p className="text-stone-700 mb-4">{proposal.content}</p>
+      )}
+
+      <div className="flex items-center gap-3 flex-wrap">
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="px-3 py-2 bg-white/60 border border-white rounded-xl text-sm"
+        >
+          <option value="school_harmony">Armonie la școală</option>
+          <option value="exams_tests">Examene și teste</option>
+          <option value="family_reconnection">Reconectare familială</option>
+          <option value="overcoming_failure">Depășirea eșecului</option>
+        </select>
+
+        {isEditing ? (
+          <>
+            <button onClick={handleSaveEdit} disabled={saving} className="px-4 py-2 bg-stone-800 text-white rounded-xl text-sm disabled:opacity-50">
+              {saving ? 'Se salvează...' : 'Salvează'}
+            </button>
+            <button onClick={() => { setIsEditing(false); setEditContent(proposal.content || ''); }} className="px-4 py-2 bg-stone-100 text-stone-600 rounded-xl text-sm hover:bg-stone-200">
+              Anulează
+            </button>
+          </>
+        ) : (
+          <button onClick={() => setIsEditing(true)} className="px-4 py-2 bg-stone-100 text-stone-600 rounded-xl text-sm hover:bg-stone-200">
+            Editează
+          </button>
+        )}
+
+        {!isEditing && (
+          <>
+            <button
+              onClick={() => onApprove(proposal, category)}
+              className="px-4 py-2 bg-green-600 text-white rounded-xl text-sm hover:bg-green-700"
+            >
+              Aprobă (+50 XP)
+            </button>
+
+            <button
+              onClick={() => onReject(proposal)}
+              className="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-sm hover:bg-red-100"
+            >
+              Respinge
+            </button>
+          </>
+        )}
+      </div>
+    </motion.div>
+  )
+}
+
 const categoryLabels: Record<string, string> = {
   school_harmony: 'Armonie la școală',
   exams_tests: 'Examene și teste',
@@ -460,6 +584,10 @@ export default function AdminPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
+
+  const [activeTab, setActiveTab] = useState<'messages' | 'proposals'>('messages')
+  const [proposedMessages, setProposedMessages] = useState<ProposedMessage[]>([])
+  const [proposalsLoading, setProposalsLoading] = useState(true)
 
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false)
   const [editingMessage, setEditingMessage] = useState<Message | null>(null)
@@ -497,8 +625,38 @@ export default function AdminPage() {
     if (isAdmin) {
       fetchAdminData()
       fetchMessages()
+      fetchProposedMessages()
+      
+      // Polling for new proposals (more reliable than realtime INSERT)
+      const pollInterval = setInterval(fetchProposedMessages, 10000)
+      
+      const channel = supabase
+        .channel('proposals')
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'proposed_messages' },
+          (payload) => {
+            // If status changed to anything other than 'pending', remove from list
+            if (payload.new.status !== 'pending') {
+              setProposedMessages(prev => prev.filter(p => p.id !== payload.new.id))
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: 'DELETE', schema: 'public', table: 'proposed_messages' },
+          (payload) => {
+            setProposedMessages(prev => prev.filter(p => p.id !== payload.old.id))
+          }
+        )
+        .subscribe()
+
+      return () => {
+        clearInterval(pollInterval)
+        supabase.removeChannel(channel)
+      }
     }
-  }, [isAdmin])
+  }, [isAdmin, supabase])
 
   const fetchAdminData = async () => {
     try {
@@ -602,6 +760,126 @@ export default function AdminPage() {
     }
   }
 
+  const fetchProposedMessages = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('proposed_messages')
+        .select('*, profiles(first_name, email)')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      // Ensure we only set proposals that are actually pending
+      const pendingProposals = (data || []).filter(p => p.status === 'pending')
+      setProposedMessages(pendingProposals)
+    } catch (err) {
+      console.error('Error fetching proposals:', err)
+    } finally {
+      setProposalsLoading(false)
+    }
+  }
+
+  const handleApproveProposal = async (proposal: ProposedMessage, category: string) => {
+    // Store for potential revert
+    const proposalToRevert = proposal
+    
+    // Optimistic UI: remove immediately from proposals
+    setProposedMessages(prev => prev.filter(p => p.id !== proposal.id))
+    
+    try {
+      const { data: insertedMessage, error: insertError } = await supabase
+        .from('messages')
+        .insert({
+          content: proposal.content,
+          category: category,
+          age_range: ['8-10', '11-13', '14-16', '17-20'],
+          role_target: ['parent', 'teacher'],
+          is_active: true,
+        })
+        .select()
+        .single()
+
+      if (insertError) {
+        console.error('Insert error:', insertError)
+        throw insertError
+      }
+
+      // Add to active messages immediately (Optimistic UI for Mesaje tab)
+      if (insertedMessage) {
+        setMessages(prev => [{ ...insertedMessage }, ...prev])
+      }
+
+      const { error: updateError } = await supabase
+        .from('proposed_messages')
+        .update({ status: 'approved' })
+        .eq('id', proposal.id)
+
+      if (updateError) {
+        console.error('Update error:', updateError)
+        // Revert: put proposal back
+        setProposedMessages(prev => [proposalToRevert, ...prev])
+        // Remove the added message
+        if (insertedMessage) {
+          setMessages(prev => prev.filter(m => m.id !== insertedMessage.id))
+        }
+        throw updateError
+      }
+
+      await supabase.rpc('increment_xp', { 
+        user_id: proposal.user_id, 
+        amount: 50 
+      })
+
+      toast.success('Mesaj aprobat! +50 XP acordat autorului.')
+      fetchAdminData()
+    } catch (err) {
+      console.error('Error approving proposal:', err)
+      toast.error('A apărut o eroare. Vă rugăm încercați din nou.')
+    }
+  }
+
+  const handleRejectProposal = async (proposal: ProposedMessage) => {
+    // Optimistic UI: remove immediately
+    setProposedMessages(prev => prev.filter(p => p.id !== proposal.id))
+    
+    try {
+      const { error } = await supabase
+        .from('proposed_messages')
+        .delete()
+        .eq('id', proposal.id)
+
+      if (error) throw error
+      toast.success('Propunere respinsă.')
+    } catch (err) {
+      console.error('Error rejecting proposal:', err)
+      toast.error('A apărut o eroare.')
+    }
+  }
+
+  const handleEditProposal = async (proposal: ProposedMessage, newContent: string) => {
+    try {
+      const { error } = await supabase
+        .from('proposed_messages')
+        .update({ content: newContent })
+        .eq('id', proposal.id)
+
+      if (error) {
+        console.error('Error editing proposal:', error)
+        throw error
+      }
+      
+      // Optimistic update: update local state immediately
+      setProposedMessages(prev => prev.map(p => 
+        p.id === proposal.id ? { ...p, content: newContent } : p
+      ))
+      
+      toast.success('Mesaj actualizat!')
+    } catch (err) {
+      console.error('Error editing proposal:', err)
+      toast.error('A apărut o eroare.')
+    }
+  }
+
   const openEditModal = (message: Message) => {
     setEditingMessage(message)
     setIsMessageModalOpen(true)
@@ -673,7 +951,37 @@ export default function AdminPage() {
         )}
       </AnimatePresence>
 
-      <div className="glass-card p-6 rounded-3xl">
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => setActiveTab('messages')}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            activeTab === 'messages'
+              ? 'bg-stone-800 text-white'
+              : 'bg-white/60 text-stone-600 hover:bg-white/80'
+          }`}
+        >
+          Mesaje
+        </button>
+        <button
+          onClick={() => setActiveTab('proposals')}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all relative ${
+            activeTab === 'proposals'
+              ? 'bg-stone-800 text-white'
+              : 'bg-white/60 text-stone-600 hover:bg-white/80'
+          }`}
+        >
+          Cereri Noi
+          {proposedMessages.length > 0 && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 text-white text-xs rounded-full flex items-center justify-center">
+              {proposedMessages.length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      <div className="min-h-[600px]">
+        {activeTab === 'messages' && (
+        <div className="glass-card p-6 rounded-3xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <h3 className="text-lg font-semibold text-stone-800">Mesaje</h3>
           
@@ -755,6 +1063,36 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+        </div>
+      )}
+
+      {activeTab === 'proposals' && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="space-y-4"
+        >
+          {proposalsLoading ? (
+            <div className="text-center py-8 text-stone-500">Se încarcă...</div>
+          ) : proposedMessages.length === 0 ? (
+            <div className="glass-card p-8 rounded-3xl text-center">
+              <p className="text-stone-500">Nu există propuneri în așteptare.</p>
+            </div>
+          ) : (
+            <AnimatePresence mode="popLayout">
+              {proposedMessages.map((proposal) => (
+                <ProposalCard
+                  key={proposal.id}
+                  proposal={proposal}
+                  onApprove={handleApproveProposal}
+                  onReject={handleRejectProposal}
+                  onEdit={handleEditProposal}
+                />
+              ))}
+            </AnimatePresence>
+          )}
+        </motion.div>
+      )}
       </div>
 
       <MessageModal
