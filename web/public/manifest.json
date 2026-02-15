@@ -1,11 +1,11 @@
 {
-  "name": "Cuvinte de Sus",
-  "short_name": "Cuvinte",
-  "description": "Mesaje motivationale pentru copii și tineri",
+  "name": "Grădina cu Vorbe Bune",
+  "short_name": "Vorbe Bune",
+  "description": "Cultivă empatia prin cuvinte",
   "start_url": "/",
-  "display": "standalone",
+  "display": "minimal-ui",
   "background_color": "#ffffff",
-  "theme_color": "#8B5CF6",
+  "theme_color": "#22c55e",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [
@@ -22,7 +22,6 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["education", "lifestyle", "social"],
   "lang": "ro",
   "dir": "ltr",
   "prefer_related_applications": false

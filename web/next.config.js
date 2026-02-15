@@ -2,19 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  generateBuildId: async () => `build-${Date.now()}`,
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
-          { key: 'Pragma', value: 'no-cache' },
-          { key: 'Expires', value: '0' },
-        ],
-      },
-    ];
+
+  generateBuildId: async () => {
+    return `build-${Date.now()}`
   },
+
+  // NU mai pune CSP aici - e deja în middleware.ts
+  // NU mai pune Cache-Control aici - e deja în middleware.ts
+
   async redirects() {
     return [
       {
