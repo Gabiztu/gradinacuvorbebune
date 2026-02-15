@@ -9,6 +9,7 @@ import { ModalOverlayProvider } from '@/contexts/ModalOverlayContext'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { AmbientBackground } from '@/components/ui/AmbientBackground'
 import { HydrationGuard } from '@/components/ui/HydrationGuard'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 
 const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ['latin'],
@@ -49,12 +50,48 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
+              // Catch chunk loading errors and auto-reload
               window.addEventListener('error', function(e) {
-                if (e.filename && !e.filename.includes('_next/')) {
+                // Log all errors for debugging
+                console.log('Global error:', e.message, e.filename);
+                
+                // Check for chunk errors
+                if (e.message && (
+                  e.message.includes('chunk') ||
+                  e.message.includes('Loading chunk') ||
+                  e.message.includes('Failed to fetch') ||
+                  e.message.includes('NetworkError') ||
+                  e.message.includes('dynamically')
+                )) {
+                  var lastReload = sessionStorage.getItem('chunk-reload');
+                  if (!lastReload || Date.now() - parseInt(lastReload) > 5000) {
+                    sessionStorage.setItem('chunk-reload', Date.now().toString());
+                    console.log('Chunk error detected, reloading...');
+                    window.location.reload();
+                  }
+                }
+                
+                // Only suppress external script errors, not Next.js chunks
+                if (e.filename && !e.filename.includes(location.hostname) && !e.filename.includes('_next/')) {
                   e.preventDefault();
-                  console.warn('External script error suppressed:', e.filename);
                 }
               }, true);
+
+              // Catch unhandled promise rejections
+              window.addEventListener('unhandledrejection', function(e) {
+                if (e.reason && (
+                  e.reason.name === 'ChunkLoadError' ||
+                  (e.reason.message && e.reason.message.includes('chunk')) ||
+                  (e.reason.message && e.reason.message.includes('dynamically'))
+                )) {
+                  var lastReload = sessionStorage.getItem('chunk-reload');
+                  if (!lastReload || Date.now() - parseInt(lastReload) > 5000) {
+                    sessionStorage.setItem('chunk-reload', Date.now().toString());
+                    console.log('Unhandled rejection chunk error, reloading...');
+                    window.location.reload();
+                  }
+                }
+              });
             `,
           }}
         />
@@ -62,18 +99,46 @@ export default function RootLayout({
       </head>
       <body className={`${plusJakartaSans.variable} font-sans antialiased`} suppressHydrationWarning>
         <AmbientBackground />
-        <HydrationGuard>
-          <AuthProvider>
-            <FavoritesProvider>
-              <BeneficiaryProvider>
-                <ModalOverlayProvider>
-                  <AppLayout>{children}</AppLayout>
-                  <Toaster />
-                </ModalOverlayProvider>
-              </BeneficiaryProvider>
-            </FavoritesProvider>
-          </AuthProvider>
-        </HydrationGuard>
+        <ErrorBoundary>
+          <HydrationGuard>
+            <AuthProvider>
+              <FavoritesProvider>
+                <BeneficiaryProvider>
+                  <ModalOverlayProvider>
+                    <AppLayout>{children}</AppLayout>
+                    <Toaster />
+                  </ModalOverlayProvider>
+                </BeneficiaryProvider>
+              </FavoritesProvider>
+            </AuthProvider>
+          </HydrationGuard>
+        </ErrorBoundary>
+        
+        {/* Fallback for when JS completely fails */}
+        <noscript>
+          <div style={{
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+            fontFamily: 'system-ui, sans-serif',
+            padding: '20px',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🌱</div>
+            <h1 style={{ color: '#1c1917', fontSize: '24px', marginBottom: '8px' }}>
+              Grădina cu Vorbe Bune
+            </h1>
+            <p style={{ color: '#57534e', marginBottom: '16px' }}>
+              Această aplicație necesită JavaScript pentru a funcționa.
+            </p>
+            <p style={{ color: '#78716c', fontSize: '14px' }}>
+              Te rugăm să activezi JavaScript în setările browser-ului.
+            </p>
+          </div>
+        </noscript>
       </body>
     </html>
   )

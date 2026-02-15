@@ -81,24 +81,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isInitialized.current = true
 
     const checkSession = async () => {
+      // 1. Setăm un timer de siguranță (2 secunde)
+      // Dacă Supabase nu răspunde în 2 secunde, forțăm deblocarea ecranului
+      const safetyTimer = setTimeout(() => {
+        console.warn('Auth check timed out (Incognito restriction?) - Forcing load')
+        setLoading(false)
+      }, 2000)
+
       try {
         const { data, error } = await supabase.auth.getSession()
 
+        // Dacă a răspuns, ștergem timer-ul de siguranță
+        clearTimeout(safetyTimer)
+
         if (error) {
           console.error('Session error:', error.message)
-          setLoading(false)
+          // Nu mai punem setLoading(false) aici, îl lăsăm pentru finally
           return
         }
 
         if (data?.session) {
           setUser(data.session.user)
-          await refreshProfile()
-        } else {
-          setLoading(false)
+          // Așteptăm profilul, dar dacă crapă, prindem eroarea
+          await refreshProfile().catch(e => console.error("Profile refresh failed", e))
         }
       } catch (err) {
         console.error('Session check failed:', err)
+      } finally {
+        // 2. ACEASTA ESTE CHEIA: Indiferent ce se întâmplă (succes, eroare, timeout),
+        // oprim spinner-ul de loading ca să se vadă site-ul.
         setLoading(false)
+        clearTimeout(safetyTimer) // Curățăm timerul dacă s-a terminat normal
       }
     }
 
