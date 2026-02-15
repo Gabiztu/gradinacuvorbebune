@@ -14,7 +14,6 @@ export class ErrorBoundary extends React.Component<{children: React.ReactNode}, 
   }
 
   componentDidMount() {
-    // Add global error listener as backup
     if (typeof window !== 'undefined') {
       window.addEventListener('error', this.handleGlobalError)
       window.addEventListener('unhandledrejection', this.handleUnhandledRejection)
@@ -52,14 +51,14 @@ export class ErrorBoundary extends React.Component<{children: React.ReactNode}, 
   }
 
   attemptReload = () => {
+    if (typeof window === 'undefined') return
+    
     const lastReload = sessionStorage.getItem('last-error-reload')
     const now = Date.now()
     
-    // Allow reload if never reloaded or last reload was > 5 seconds ago
     if (!lastReload || now - parseInt(lastReload) > 5000) {
       sessionStorage.setItem('last-error-reload', now.toString())
       
-      // Clear caches and reload
       if ('caches' in window) {
         caches.keys().then(names => {
           names.forEach(n => caches.delete(n))
@@ -70,12 +69,13 @@ export class ErrorBoundary extends React.Component<{children: React.ReactNode}, 
         window.location.reload()
       }
     } else {
-      // If already reloaded recently, show error UI
       this.setState({ hasError: true, reloading: false })
     }
   }
 
   handleManualReload = () => {
+    if (typeof window === 'undefined') return
+    
     sessionStorage.removeItem('last-error-reload')
     if ('caches' in window) {
       caches.keys().then(names => {
