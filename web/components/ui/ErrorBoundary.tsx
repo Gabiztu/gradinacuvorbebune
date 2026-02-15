@@ -3,6 +3,20 @@ import React from 'react'
 
 interface State { hasError: boolean; error?: Error; reloading?: boolean }
 
+const reloadPage = () => {
+  if (typeof window !== 'undefined' && window.location) {
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        names.forEach(n => caches.delete(n))
+      }).finally(() => {
+        window.location.reload()
+      })
+    } else {
+      window.location.reload()
+    }
+  }
+}
+
 export class ErrorBoundary extends React.Component<{children: React.ReactNode}, State> {
   constructor(props: any) { 
     super(props); 
@@ -58,34 +72,15 @@ export class ErrorBoundary extends React.Component<{children: React.ReactNode}, 
     
     if (!lastReload || now - parseInt(lastReload) > 5000) {
       sessionStorage.setItem('last-error-reload', now.toString())
-      
-      if ('caches' in window) {
-        caches.keys().then(names => {
-          names.forEach(n => caches.delete(n))
-        }).finally(() => {
-          window.location.reload()
-        })
-      } else {
-        window.location.reload()
-      }
+      reloadPage()
     } else {
       this.setState({ hasError: true, reloading: false })
     }
   }
 
   handleManualReload = () => {
-    if (typeof window === 'undefined') return
-    
     sessionStorage.removeItem('last-error-reload')
-    if ('caches' in window) {
-      caches.keys().then(names => {
-        names.forEach(n => caches.delete(n))
-      }).finally(() => {
-        window.location.reload()
-      })
-    } else {
-      window.location.reload()
-    }
+    reloadPage()
   }
 
   render() {
