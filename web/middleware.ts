@@ -66,11 +66,17 @@ export async function middleware(request: NextRequest) {
 
   supabaseResponse.headers.set('Content-Security-Policy', cspHeader)
 
-  // 5. Cache - DOAR prevent browser back/forward cache, NU bloca totul
-  supabaseResponse.headers.set(
-    'Cache-Control', 
-    'private, no-cache, must-revalidate'
-  )
+  // 5. Cache - Prevent browser back/forward cache for protected routes
+  // Only apply strict cache headers to protected routes
+  if (!isPublicRoute && !isPublicFile) {
+    supabaseResponse.headers.set('Cache-Control', 'private, no-cache, no-store, must-revalidate, proxy-revalidate')
+    supabaseResponse.headers.set('Pragma', 'no-cache')
+    supabaseResponse.headers.set('Expires', '0')
+    supabaseResponse.headers.set('Surrogate-Control', 'no-store')
+  } else {
+    // Public routes can be cached
+    supabaseResponse.headers.set('Cache-Control', 'private, no-cache, must-revalidate')
+  }
 
   return supabaseResponse
 }

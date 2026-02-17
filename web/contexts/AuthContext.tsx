@@ -78,8 +78,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let isCleanup = false
 
     const initAuth = async () => {
+      // Safety timeout - force loading=false after 3 seconds
+      const timeoutId = setTimeout(() => {
+        if (isMounted.current) {
+          setLoading(false)
+        }
+      }, 3000)
+
       try {
         const { data, error } = await supabase.auth.getSession()
+
+        // Clear timeout if request completed
+        clearTimeout(timeoutId)
 
         if (error) {
           if (isMounted.current) {
@@ -90,13 +100,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (data?.session?.user) {
           setUser(data.session.user)
-          await refreshProfile()
-        }
-        
-        if (isMounted.current) {
-          setLoading(false)
+          // Don't await - let profile load in background
+          refreshProfile().finally(() => {
+            if (isMounted.current) {
+              setLoading(false)
+            }
+          })
+        } else {
+          if (isMounted.current) {
+            setLoading(false)
+          }
         }
       } catch (err) {
+        clearTimeout(timeoutId)
         if (err instanceof Error && err.name === 'AbortError') return
         if (isMounted.current) {
           setLoading(false)
@@ -195,6 +211,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await refreshProfile()
       }
     } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return
       console.error('Error refreshing user:', error)
     }
   }
