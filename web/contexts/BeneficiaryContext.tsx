@@ -23,12 +23,16 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
 
   const fetchBeneficiaries = useCallback(async () => {
+    // DON'T clear data while auth is still loading - wait for auth to complete
     if (!user) {
-      console.log('[BeneficiaryContext] fetchBeneficiaries - no user, clearing list')
-      setBeneficiaries([])
+      if (!authLoading) {
+        // Only clear if auth is DONE and there's truly no user (logged out)
+        console.log('[BeneficiaryContext] fetchBeneficiaries - no user (logged out), clearing list')
+        setBeneficiaries([])
+      }
       setLoading(false)
       return
     }
@@ -55,7 +59,7 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
     } finally {
       setLoading(false)
     }
-  }, [user, supabase])
+  }, [user, authLoading, supabase])
 
   useEffect(() => {
     fetchBeneficiaries()

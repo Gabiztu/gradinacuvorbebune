@@ -22,13 +22,17 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const [favoritesMessages, setFavoritesMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
 
   const fetchFavorites = useCallback(async () => {
+    // DON'T clear data while auth is still loading - wait for auth to complete
     if (!user) {
-      console.log('[FavoritesContext] fetchFavorites - no user, clearing list')
-      setFavorites([])
-      setFavoritesMessages([])
+      if (!authLoading) {
+        // Only clear if auth is DONE and there's truly no user (logged out)
+        console.log('[FavoritesContext] fetchFavorites - no user (logged out), clearing list')
+        setFavorites([])
+        setFavoritesMessages([])
+      }
       setLoading(false)
       return
     }
@@ -66,11 +70,11 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return
-      console.error('Favorites fetch error:', err)
+      console.error('[FavoritesContext] fetchFavorites error:', err)
     } finally {
       setLoading(false)
     }
-  }, [user, supabase])
+  }, [user, authLoading, supabase])
 
   useEffect(() => {
     fetchFavorites()
