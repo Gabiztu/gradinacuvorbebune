@@ -32,12 +32,11 @@ export default function ProfilPage() {
   }, [])
 
   useEffect(() => {
-    if (user?.user_metadata?.first_name) {
-      setEditName(user.user_metadata.first_name)
-    } else if (user?.email) {
-      setEditName(user.email.split('@')[0])
+    const name = profile?.first_name || user?.user_metadata?.first_name || user?.email?.split('@')[0] || ''
+    if (name) {
+      setEditName(name)
     }
-  }, [user])
+  }, [user, profile])
 
   const handleSignOut = async () => {
     setSigningOut(true)
@@ -140,11 +139,11 @@ export default function ProfilPage() {
   }
 
   const handleCancelEdit = () => {
-    setEditName(user?.user_metadata?.first_name || user?.email?.split('@')[0] || '')
+    setEditName(profile?.first_name || user?.user_metadata?.first_name || user?.email?.split('@')[0] || '')
     setIsEditing(false)
   }
 
-  const currentName = user?.user_metadata?.first_name || user?.email?.split('@')[0] || ''
+  const currentName = profile?.first_name || user?.user_metadata?.first_name || user?.email?.split('@')[0] || ''
   const userEmail = user?.email || ''
 
   return (

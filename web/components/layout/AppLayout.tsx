@@ -48,7 +48,7 @@ function DesktopSidebar() {
 
   const getUserDisplayName = () => {
     if (!user) return null
-    return user.user_metadata?.first_name || user.email?.split('@')[0] || 'Utilizator'
+    return profile?.first_name || user.user_metadata?.first_name || user.email?.split('@')[0] || 'Utilizator'
   }
 
   return (
@@ -94,7 +94,7 @@ function DesktopSidebar() {
                 <div className="w-full h-full bg-stone-200 animate-pulse" />
               ) : user ? (
                 <div className="w-full h-full bg-gradient-to-b from-stone-100 to-stone-300 flex items-center justify-center text-xs font-medium">
-                  {user.user_metadata?.first_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+                  {(profile?.first_name || user.user_metadata?.first_name)?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
                 </div>
               ) : (
                 <div className="w-full h-full bg-stone-100 flex items-center justify-center text-stone-400">
