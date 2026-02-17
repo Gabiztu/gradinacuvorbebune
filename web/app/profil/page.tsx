@@ -122,9 +122,9 @@ export default function ProfilPage() {
       }
       
       console.log('[ProfilePage] handleSaveName success:', data)
+      await supabase.auth.refreshSession()
       await refreshUser()
       await refreshProfile()
-      router.refresh()
       setIsEditing(false)
     } catch (error) {
       console.error('[ProfilePage] Error updating name:', error)

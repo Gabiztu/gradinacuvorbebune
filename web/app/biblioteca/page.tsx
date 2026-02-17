@@ -229,7 +229,6 @@ function CustomMessageModal({
       toast.success('Mesajul tău a fost trimis!')
       setMessage('')
       onClose()
-      router.refresh()
     } catch (err) {
       console.error('Error submitting message:', err)
       toast.error('A apărut o eroare. Încearcă din nou.')
