@@ -108,26 +108,45 @@ export default function ProfilPage() {
   const handleSaveName = async () => {
     if (!editName.trim() || !user) return
     
-    console.log('[ProfilePage] handleSaveName - userId:', user.id, 'newName:', editName.trim())
+    console.log('[ProfilePage] Step 1: Starting updateUser...')
     setSaving(true)
     try {
       const supabase = createClient()
-      const { data, error } = await supabase.auth.updateUser({
-        data: { first_name: editName.trim() }
+      
+      const { data: updateData, error: updateError } = await supabase.auth.updateUser({ 
+        data: { first_name: editName.trim() } 
       })
       
-      if (error) {
-        console.error('[ProfilePage] handleSaveName error:', error.message, error.code)
-        throw error
-      }
+      console.log('[ProfilePage] Step 2: updateUser result:', { 
+        success: !!updateData, 
+        error: updateError?.message ?? 'none' 
+      })
       
-      console.log('[ProfilePage] handleSaveName success:', data)
-      await supabase.auth.refreshSession()
+      if (updateError) {
+        console.error('[ProfilePage] updateUser FAILED:', updateError)
+        return
+      }
+
+      console.log('[ProfilePage] Step 3: Calling refreshSession...')
+      
+      const { data: sessionData, error: sessionError } = await supabase.auth.refreshSession()
+      
+      console.log('[ProfilePage] Step 4: refreshSession result:', {
+        success: !!sessionData?.session,
+        error: sessionError?.message ?? 'none'
+      })
+
+      console.log('[ProfilePage] Step 5: Calling refreshUser...')
       await refreshUser()
+      
+      console.log('[ProfilePage] Step 6: Calling refreshProfile...')
       await refreshProfile()
+      
+      console.log('[ProfilePage] Step 7: All done!')
       setIsEditing(false)
-    } catch (error) {
-      console.error('[ProfilePage] Error updating name:', error)
+      
+    } catch (err) {
+      console.error('[ProfilePage] handleSaveName CRASHED:', err)
     } finally {
       setSaving(false)
     }
