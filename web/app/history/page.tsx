@@ -131,7 +131,7 @@ export default function HistoryPage() {
               ...item,
               messages: msg ? [msg] : null
             }
-          }).filter(item => item.messages && item.messages[0]?.content)
+          }).filter((item: any) => item.messages && item.messages[0]?.content)
 
           setHistory(processedData)
         }
