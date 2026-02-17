@@ -629,7 +629,7 @@ export default function AdminPage() {
     if (authLoading) return
 
     if (!user) {
-      router.push('/login')
+      window.location.replace('/login')
       return
     }
 

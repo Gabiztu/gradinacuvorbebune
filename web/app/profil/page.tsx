@@ -44,7 +44,7 @@ export default function ProfilPage() {
     await signOut()
     localStorage.clear()
     sessionStorage.clear()
-    router.push('/login')
+    window.location.replace('/login')
   }
 
   const handleDeleteAccount = async () => {
@@ -67,8 +67,7 @@ export default function ProfilPage() {
       localStorage.clear()
       sessionStorage.clear()
       
-      router.push('/login')
-      window.location.reload()
+      window.location.replace('/login')
     } catch (error) {
       console.error('Error deleting account:', error)
       setDeleteError('Nu am putut șterge contul. Încearcă din nou.')

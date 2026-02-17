@@ -132,7 +132,7 @@ function MobileBottomNav() {
   const pageKey = getPageKey(pathname)
 
   return (
-    <div className="md:hidden fixed bottom-0 w-full glass-panel border-t border-white/50 pb-safe z-40 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
+    <div className="md:hidden fixed bottom-0 w-full glass-panel border-t border-white/50 pb-safe z-40 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.03)] touch-manipulation">
       <div className="flex justify-around items-end py-2 px-2">
         {mobileNavItems.map((item) => {
           const isActive = pageKey === item.key
@@ -142,7 +142,7 @@ function MobileBottomNav() {
               <div key={item.key} className="relative -top-6">
                 <Link
                   href={item.href}
-                  className="w-14 h-14 rounded-full bg-stone-800 text-white flex items-center justify-center shadow-xl shadow-stone-800/30 active:scale-95 transition-transform border-[5px] border-[#FAFAF9]"
+                  className="w-14 h-14 rounded-full bg-stone-800 text-white flex items-center justify-center shadow-xl shadow-stone-800/30 active:scale-95 transition-transform border-[5px] border-[#FAFAF9] -webkit-tap-highlight-color-transparent"
                 >
                   <iconify-icon icon={item.icon} width="28" />
                 </Link>
@@ -155,7 +155,7 @@ function MobileBottomNav() {
               key={item.key}
               href={item.href}
               className={cn(
-                'flex flex-col items-center gap-0.5 w-14 transition-colors',
+                'flex flex-col items-center gap-0.5 w-14 transition-colors -webkit-tap-highlight-color-transparent',
                 isActive ? 'text-stone-800' : 'text-stone-400'
               )}
             >
