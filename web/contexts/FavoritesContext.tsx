@@ -41,7 +41,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         .limit(50)
       
       if (data) {
-        const ids = data.map(f => f.message_id)
+        const ids = data.map((f: any) => f.message_id)
         setFavorites(ids)
         
         const messages = data
@@ -49,7 +49,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
             ...f.messages,
             favorited_at: f.created_at,
           }))
-          .filter((m): m is Message & { favorited_at: string } => m !== null && m !== undefined && m.id && m.content)
+          .filter((m: any): m is Message & { favorited_at: string } => m !== null && m !== undefined && m.id && m.content)
           .reduce((acc: (Message & { favorited_at: string })[], current: Message & { favorited_at: string }) => {
             const exists = acc.find(m => m.id === current.id)
             if (!exists) acc.push(current)

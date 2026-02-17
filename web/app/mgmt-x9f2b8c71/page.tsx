@@ -665,7 +665,7 @@ export default function AdminPage() {
         .on(
           'postgres_changes',
           { event: 'UPDATE', schema: 'public', table: 'proposed_messages' },
-          (payload) => {
+          (payload: any) => {
             // If status changed to anything other than 'pending', remove from list
             if (payload.new.status !== 'pending') {
               setProposedMessages(prev => prev.filter(p => p.id !== payload.new.id))
@@ -675,7 +675,7 @@ export default function AdminPage() {
         .on(
           'postgres_changes',
           { event: 'DELETE', schema: 'public', table: 'proposed_messages' },
-          (payload) => {
+          (payload: any) => {
             setProposedMessages(prev => prev.filter(p => p.id !== payload.old.id))
           }
         )
@@ -783,7 +783,7 @@ export default function AdminPage() {
 
       if (error) throw error
       // Ensure we only set proposals that are actually pending
-      const pendingProposals = (data || []).filter(p => p.status === 'pending')
+      const pendingProposals = (data || []).filter((p: any) => p.status === 'pending')
       setProposedMessages(pendingProposals)
     } catch (err) {
       console.error('Error fetching proposals:', err)

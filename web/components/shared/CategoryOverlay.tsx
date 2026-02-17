@@ -122,7 +122,7 @@ export function CategoryOverlay({ categoryId, onBack }: CategoryOverlayProps) {
         .limit(50)
       
       if (data) {
-        const processed = data.filter((m): m is Message => m && m.id && m.content)
+        const processed = data.filter((m: any): m is Message => m && m.id && m.content)
         setMessages(processed)
       }
     } catch (e) {

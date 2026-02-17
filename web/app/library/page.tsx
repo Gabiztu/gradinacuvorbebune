@@ -128,7 +128,7 @@ export default function LibraryPage() {
         .eq('user_id', user?.id)
       
       if (data) {
-        const uniqueMessageIds = new Set(data.map(i => i.message_id))
+        const uniqueMessageIds = new Set(data.map((i: any) => i.message_id))
         setHistoryCount(uniqueMessageIds.size)
       }
     } catch (e) {
