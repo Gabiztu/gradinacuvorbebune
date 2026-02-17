@@ -45,6 +45,12 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
+      console.log('[BeneficiaryContext] Supabase response:', { 
+        data: data?.length ?? 'null', 
+        error: error?.message ?? 'none',
+        userId: user.id 
+      })
+
       if (error) {
         console.error('[BeneficiaryContext] Beneficiaries fetch error:', error.message, error.code)
       } else if (data) {

@@ -51,6 +51,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('id', userId)
         .maybeSingle()
 
+      console.log('[AuthContext] Profile response:', { 
+        data: profileData ? 'exists' : 'null', 
+        error: profileError?.message ?? 'none',
+        userId: userId
+      })
+
       if (profileError) {
         console.error('[AuthContext] Error fetching profile:', profileError.message, profileError.code)
       } else if (profileData) {

@@ -46,6 +46,12 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
         .order('created_at', { ascending: false })
         .limit(50)
       
+      console.log('[FavoritesContext] Supabase response:', { 
+        data: data?.length ?? 'null', 
+        error: error?.message ?? 'none',
+        userId: user.id 
+      })
+
       if (error) {
         console.error('[FavoritesContext] fetchFavorites error:', error.message, error.code)
       } else if (data) {
