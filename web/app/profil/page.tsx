@@ -126,13 +126,7 @@ export default function ProfilPage() {
       
       console.log('[ProfilePage] Profile updated successfully')
       
-      // Update auth metadata in background (fire and forget - don't await)
-      supabase.auth.updateUser({ 
-        data: { first_name: editName.trim() } 
-      }).catch((err: Error) => console.error('[ProfilePage] Auth update failed (non-blocking):', err))
-      
-      // Refresh local state
-      await refreshUser()
+      // Refresh profile state only
       await refreshProfile()
       
       console.log('[ProfilePage] All done!')
