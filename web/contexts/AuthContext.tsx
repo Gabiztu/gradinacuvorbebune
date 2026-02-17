@@ -34,7 +34,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession()
       const userId = session?.user?.id
       
+      console.log('[AuthContext] refreshProfile - session:', session ? 'exists' : 'null', 'userId:', userId)
+      
       if (!userId) {
+        console.warn('[AuthContext] refreshProfile - NO userId in session')
         if (isMounted.current) {
           setUser(null)
           setProfile(null)
@@ -48,16 +51,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('id', userId)
         .maybeSingle()
 
+      console.log('[AuthContext] Profile response:', { 
+        data: profileData ? 'exists' : 'null', 
+        error: profileError?.message ?? 'none',
+        userId: userId
+      })
+
       if (profileError) {
-        console.error('Error fetching profile:', profileError.message)
+        console.error('[AuthContext] Error fetching profile:', profileError.message, profileError.code)
       } else if (profileData) {
+        console.log('[AuthContext] Profile fetched successfully:', profileData.id, 'xp:', profileData.total_xp)
         if (isMounted.current) {
           setProfile(profileData as Profile)
         }
+      } else {
+        console.warn('[AuthContext] Profile returned NULL or EMPTY for userId:', userId)
       }
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return
-      console.error('Unexpected Auth Error:', err)
+      console.error('[AuthContext] Unexpected Auth Error:', err)
     }
   }, [supabase])
 

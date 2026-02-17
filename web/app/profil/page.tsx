@@ -32,12 +32,11 @@ export default function ProfilPage() {
   }, [])
 
   useEffect(() => {
-    if (user?.user_metadata?.first_name) {
-      setEditName(user.user_metadata.first_name)
-    } else if (user?.email) {
-      setEditName(user.email.split('@')[0])
+    const name = profile?.first_name || user?.user_metadata?.first_name || user?.email?.split('@')[0] || ''
+    if (name) {
+      setEditName(name)
     }
-  }, [user])
+  }, [user, profile])
 
   const handleSignOut = async () => {
     setSigningOut(true)
@@ -108,27 +107,43 @@ export default function ProfilPage() {
   const handleSaveName = async () => {
     if (!editName.trim() || !user) return
     
+    console.log('[ProfilePage] handleSaveName - Starting...')
     setSaving(true)
     try {
       const supabase = createClient()
-      await supabase.auth.updateUser({
-        data: { first_name: editName.trim() }
-      })
-      await refreshUser()
+      
+      // Update profiles table directly (this works)
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ first_name: editName.trim() })
+        .eq('id', user.id)
+      
+      if (profileError) {
+        console.error('[ProfilePage] Profile update failed:', profileError.message)
+        return
+      }
+      
+      console.log('[ProfilePage] Profile updated successfully')
+      
+      // Refresh profile state only
+      await refreshProfile()
+      
+      console.log('[ProfilePage] All done!')
       setIsEditing(false)
-    } catch (error) {
-      console.error('Error updating name:', error)
+      
+    } catch (err) {
+      console.error('[ProfilePage] handleSaveName error:', err)
     } finally {
       setSaving(false)
     }
   }
 
   const handleCancelEdit = () => {
-    setEditName(user?.user_metadata?.first_name || user?.email?.split('@')[0] || '')
+    setEditName(profile?.first_name || user?.user_metadata?.first_name || user?.email?.split('@')[0] || '')
     setIsEditing(false)
   }
 
-  const currentName = user?.user_metadata?.first_name || user?.email?.split('@')[0] || ''
+  const currentName = profile?.first_name || user?.user_metadata?.first_name || user?.email?.split('@')[0] || ''
   const userEmail = user?.email || ''
 
   return (

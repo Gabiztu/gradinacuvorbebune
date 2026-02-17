@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useFavorites } from '@/contexts/FavoritesContext'
 import { useBeneficiary } from '@/contexts/BeneficiaryContext'
 import { useAuth } from '@/contexts/AuthContext'
@@ -204,13 +204,15 @@ function CustomMessageModal({
   const { user, profile } = useAuth()
   const { selectedBeneficiary } = useBeneficiary()
   const supabase = createClient()
+  const router = useRouter()
 
   const handleSubmit = async () => {
     if (!message.trim() || !user) return
 
+    console.log('[Biblioteca] handleSubmit - userId:', user.id, 'message length:', message.trim().length)
     setSubmitting(true)
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('proposed_messages')
         .insert({
           user_id: user.id,
@@ -218,8 +220,12 @@ function CustomMessageModal({
           status: 'pending',
         })
 
-      if (error) throw error
+      if (error) {
+        console.error('[Biblioteca] handleSubmit error:', error.message, error.code)
+        throw error
+      }
 
+      console.log('[Biblioteca] handleSubmit success:', data)
       toast.success('Mesajul tău a fost trimis!')
       setMessage('')
       onClose()

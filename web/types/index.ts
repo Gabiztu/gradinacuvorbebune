@@ -13,6 +13,7 @@ export interface Profile {
   is_admin?: boolean
   total_xp: number
   streak_count: number
+  first_name?: string
   last_active_date: string | null
   created_at: string
   updated_at: string
