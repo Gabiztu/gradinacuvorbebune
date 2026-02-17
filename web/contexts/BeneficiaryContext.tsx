@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/contexts/AuthContext'
 import type { Beneficiary } from '@/types'
 
 interface BeneficiaryContextType {
@@ -22,33 +23,38 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+  const { user } = useAuth()
 
   const fetchBeneficiaries = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       setBeneficiaries([])
       setLoading(false)
       return
     }
 
-    const { data } = await supabase
-      .from('beneficiaries')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+    try {
+      const { data } = await supabase
+        .from('beneficiaries')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
 
-    if (data) {
-      setBeneficiaries(data as Beneficiary[])
+      if (data) {
+        setBeneficiaries(data as Beneficiary[])
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') return
+      console.error('Beneficiaries fetch error:', err)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
-  }, [])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchBeneficiaries()
   }, [fetchBeneficiaries])
 
   const addBeneficiary = useCallback(async (beneficiary: Omit<Beneficiary, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('User not authenticated')
 
     const { data, error } = await supabase
@@ -70,26 +76,22 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
     }
 
     return newBeneficiary
-  }, [selectedBeneficiary])
+  }, [selectedBeneficiary, supabase, user])
 
   const updateBeneficiary = useCallback(async (id: string, data: Partial<Beneficiary>) => {
-    console.log('Updating beneficiary:', id, data)
     const { error } = await supabase
       .from('beneficiaries')
       .update(data)
       .eq('id', id)
 
-    if (error) {
-      console.error('Supabase error:', error)
-      throw error
-    }
+    if (error) throw error
 
     setBeneficiaries(prev => prev.map(b => b.id === id ? { ...b, ...data } : b))
     
     if (selectedBeneficiary?.id === id) {
       setSelectedBeneficiary(prev => prev ? { ...prev, ...data } : null)
     }
-  }, [selectedBeneficiary])
+  }, [selectedBeneficiary, supabase])
 
   const deleteBeneficiary = useCallback(async (id: string) => {
     const { error } = await supabase
@@ -104,7 +106,7 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
     if (selectedBeneficiary?.id === id) {
       setSelectedBeneficiary(beneficiaries.find(b => b.id !== id) || null)
     }
-  }, [beneficiaries, selectedBeneficiary])
+  }, [beneficiaries, selectedBeneficiary, supabase])
 
   const refreshBeneficiaries = useCallback(async () => {
     await fetchBeneficiaries()

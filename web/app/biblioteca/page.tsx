@@ -246,7 +246,7 @@ function CustomMessageModal({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed bottom-0 left-0 right-0 z-50 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-lg w-full bg-[#FAFAF9] rounded-t-3xl md:rounded-3xl p-6 shadow-xl pb-24 md:pb-6"
+            className="fixed bottom-0 left-0 right-0 z-50 max-h-[45vh] overflow-y-auto md:max-h-[41vh] md:inset-0 md:m-auto md:max-w-lg md:w-auto w-full bg-[#FAFAF9] rounded-t-3xl md:rounded-3xl p-6 shadow-xl pb-8 md:pb-6"
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-stone-800">Mesaj Personalizat</h2>

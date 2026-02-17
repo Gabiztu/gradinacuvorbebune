@@ -100,7 +100,6 @@ export default function RootLayout({
       <body className={`${plusJakartaSans.variable} font-sans antialiased`} suppressHydrationWarning>
         <AmbientBackground />
         <ErrorBoundary>
-          <HydrationGuard>
             <AuthProvider>
               <FavoritesProvider>
                 <BeneficiaryProvider>
@@ -111,7 +110,6 @@ export default function RootLayout({
                 </BeneficiaryProvider>
               </FavoritesProvider>
             </AuthProvider>
-          </HydrationGuard>
         </ErrorBoundary>
         
         {/* Fallback for when JS completely fails */}

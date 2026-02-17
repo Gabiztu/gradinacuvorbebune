@@ -24,45 +24,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
-  const isInitialized = useRef(false)
+  const isMounted = useRef(true)
 
   const refreshProfile = useCallback(async () => {
-  try {
-    // Încercăm să luăm ID-ul fie din state, fie direct dintr-o sesiune proaspătă
-    let userId = user?.id;
+    if (!isMounted.current) return
     
-    if (!userId) {
-      const { data: sData } = await supabase.auth.getSession();
-      userId = sData.session?.user?.id;
+    try {
+      // ALWAYS get fresh session - don't rely on closure
+      const { data: { session } } = await supabase.auth.getSession()
+      const userId = session?.user?.id
+      
+      if (!userId) {
+        if (isMounted.current) {
+          setUser(null)
+          setProfile(null)
+        }
+        return
+      }
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle()
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError.message)
+      } else if (profileData) {
+        if (isMounted.current) {
+          setProfile(profileData as Profile)
+        }
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') return
+      console.error('Unexpected Auth Error:', err)
     }
-
-    if (!userId) {
-      setLoading(false);
-      return;
-    }
-
-    console.log('Fetching profile for:', userId); // Debug log
-
-    const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-
-    if (profileError) {
-      console.error('Error fetching profile:', profileError.message);
-      setProfile(null);
-    } else if (profileData) {
-      console.log('Profile loaded:', profileData); // Debug log
-      setProfile(profileData as Profile);
-    }
-
-  } catch (err) {
-    console.error('Unexpected Auth Error:', err);
-  } finally {
-    setLoading(false);
-  }
-}, [user?.id, supabase]);
+  }, [supabase])
 
   const clearInvalidSession = useCallback(async () => {
     try {
@@ -70,67 +67,70 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       console.error('Error clearing session:', e)
     }
-    setUser(null)
-    setProfile(null)
-    setLoading(false)
-    isInitialized.current = false
+    if (isMounted.current) {
+      setUser(null)
+      setProfile(null)
+      setLoading(false)
+    }
   }, [supabase])
 
   useEffect(() => {
-    if (isInitialized.current) return
-    isInitialized.current = true
+    let isCleanup = false
 
-    const checkSession = async () => {
-      // 1. Setăm un timer de siguranță (2 secunde)
-      // Dacă Supabase nu răspunde în 2 secunde, forțăm deblocarea ecranului
-      const safetyTimer = setTimeout(() => {
-        console.warn('Auth check timed out (Incognito restriction?) - Forcing load')
-        setLoading(false)
-      }, 2000)
-
+    const initAuth = async () => {
       try {
         const { data, error } = await supabase.auth.getSession()
 
-        // Dacă a răspuns, ștergem timer-ul de siguranță
-        clearTimeout(safetyTimer)
-
         if (error) {
-          console.error('Session error:', error.message)
-          // Nu mai punem setLoading(false) aici, îl lăsăm pentru finally
+          if (isMounted.current) {
+            setLoading(false)
+          }
           return
         }
 
-        if (data?.session) {
+        if (data?.session?.user) {
           setUser(data.session.user)
-          // Așteptăm profilul, dar dacă crapă, prindem eroarea
-          await refreshProfile().catch(e => console.error("Profile refresh failed", e))
+          await refreshProfile()
+        }
+        
+        if (isMounted.current) {
+          setLoading(false)
         }
       } catch (err) {
-        console.error('Session check failed:', err)
-      } finally {
-        // 2. ACEASTA ESTE CHEIA: Indiferent ce se întâmplă (succes, eroare, timeout),
-        // oprim spinner-ul de loading ca să se vadă site-ul.
-        setLoading(false)
-        clearTimeout(safetyTimer) // Curățăm timerul dacă s-a terminat normal
+        if (err instanceof Error && err.name === 'AbortError') return
+        if (isMounted.current) {
+          setLoading(false)
+        }
       }
     }
 
-    checkSession()
+    initAuth()
 
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event: string, session: Session | null) => {
-        if (session) {
-          setUser(session.user)
-          await refreshProfile()
-        } else {
-          setUser(null)
-          setProfile(null)
-          setLoading(false)
+        if (isCleanup || !isMounted.current) return
+
+        try {
+          if (session) {
+            setUser(session.user)
+            await refreshProfile()
+          } else {
+            setUser(null)
+            setProfile(null)
+          }
+        } catch (err) {
+          if (err instanceof Error && err.name === 'AbortError') return
+          console.error('Auth state change error:', err)
         }
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      isCleanup = true
+      isMounted.current = false
+      subscription.unsubscribe()
+    }
   }, [supabase, refreshProfile])
 
   const signIn = async (email: string, password: string) => {

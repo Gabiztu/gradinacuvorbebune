@@ -65,11 +65,10 @@ function AddBeneficiaryModal({
             onClick={onClose}
           />
           <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-50 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-md w-full bg-[#FAFAF9] rounded-t-3xl md:rounded-3xl p-6 shadow-xl pb-24 md:pb-6"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="fixed bottom-0 left-0 right-0 z-50 max-h-[85vh] overflow-y-auto md:max-h-[58vh] md:inset-0 md:m-auto md:max-w-md md:w-auto w-full bg-[#FAFAF9] rounded-t-3xl md:rounded-3xl p-6 shadow-xl pb-8 md:pb-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-stone-800">Adaugă Beneficiar</h2>
@@ -166,14 +165,14 @@ function EditBeneficiaryModal({
   isOpen: boolean
   onClose: () => void
   onSubmit: (data: Partial<Beneficiary>) => void
-  beneficiary: Beneficiary
+  beneficiary: Beneficiary | null
 }) {
-  const [firstName, setFirstName] = useState(beneficiary.first_name)
-  const [ageRange, setAgeRange] = useState<BeneficiaryAgeRange>(beneficiary.age_range)
-  const [relation, setRelation] = useState(beneficiary.relation)
+  const [firstName, setFirstName] = useState(beneficiary?.first_name || '')
+  const [ageRange, setAgeRange] = useState<BeneficiaryAgeRange>(beneficiary?.age_range || '8-10')
+  const [relation, setRelation] = useState(beneficiary?.relation || 'Fiu')
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && beneficiary) {
       setFirstName(beneficiary.first_name)
       setAgeRange(beneficiary.age_range)
       setRelation(beneficiary.relation)
@@ -214,11 +213,10 @@ function EditBeneficiaryModal({
             onClick={onClose}
           />
           <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-50 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-md w-full bg-[#FAFAF9] rounded-t-3xl md:rounded-3xl p-6 shadow-xl pb-24 md:pb-6"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="fixed bottom-0 left-0 right-0 z-50 max-h-[85vh] overflow-y-auto md:max-h-[58vh] md:inset-0 md:m-auto md:max-w-md md:w-auto w-full bg-[#FAFAF9] rounded-t-3xl md:rounded-3xl p-6 shadow-xl pb-8 md:pb-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-stone-800">Editează Beneficiar</h2>
@@ -474,17 +472,15 @@ export default function BeneficiariPage() {
         onSubmit={handleAdd}
       />
 
-      {editingBeneficiary && (
-        <EditBeneficiaryModal
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            setIsEditModalOpen(false)
-            setEditingBeneficiary(null)
-          }}
-          onSubmit={handleEdit}
-          beneficiary={editingBeneficiary}
-        />
-      )}
+      <EditBeneficiaryModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false)
+          setEditingBeneficiary(null)
+        }}
+        onSubmit={handleEdit}
+        beneficiary={editingBeneficiary}
+      />
     </>
   )
 }

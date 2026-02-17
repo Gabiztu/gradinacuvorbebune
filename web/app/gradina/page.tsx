@@ -154,7 +154,7 @@ export default function GradinaPage() {
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-wider text-stone-400 font-semibold">Serie Activă</p>
-            <p className="text-sm font-semibold text-stone-800">{profile?.streak_count || 12} Zile</p>
+            <p className="text-sm font-semibold text-stone-800">{profile?.streak_count ?? 0} Zile</p>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/contexts/AuthContext'
 import type { Message } from '@/types'
 
 interface FavoritesContextType {
@@ -21,9 +22,9 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const [favoritesMessages, setFavoritesMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+  const { user } = useAuth()
 
   const fetchFavorites = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       setFavorites([])
       setFavoritesMessages([])
@@ -31,32 +32,38 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    const { data } = await supabase
-      .from('favorites')
-      .select('message_id, created_at, messages:message_id(id, content, category)')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(50)
-    
-    if (data) {
-      const ids = data.map(f => f.message_id)
-      setFavorites(ids)
+    try {
+      const { data } = await supabase
+        .from('favorites')
+        .select('message_id, created_at, messages:message_id(id, content, category)')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(50)
       
-      const messages = data
-        .map((f: any) => ({
-          ...f.messages,
-          favorited_at: f.created_at,
-        }))
-        .filter((m): m is Message & { favorited_at: string } => m !== null && m !== undefined && m.id && m.content)
-        .reduce((acc: (Message & { favorited_at: string })[], current: Message & { favorited_at: string }) => {
-          const exists = acc.find(m => m.id === current.id)
-          if (!exists) acc.push(current)
-          return acc
-        }, [])
-      setFavoritesMessages(messages as Message[])
+      if (data) {
+        const ids = data.map((f: any) => f.message_id)
+        setFavorites(ids)
+        
+        const messages = data
+          .map((f: any) => ({
+            ...f.messages,
+            favorited_at: f.created_at,
+          }))
+          .filter((m: any): m is Message & { favorited_at: string } => m !== null && m !== undefined && m.id && m.content)
+          .reduce((acc: (Message & { favorited_at: string })[], current: Message & { favorited_at: string }) => {
+            const exists = acc.find(m => m.id === current.id)
+            if (!exists) acc.push(current)
+            return acc
+          }, [])
+        setFavoritesMessages(messages as Message[])
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') return
+      console.error('Favorites fetch error:', err)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
-  }, [])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchFavorites()
@@ -67,7 +74,6 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   }, [favorites])
 
   const toggleFavorite = useCallback(async (messageId: string, messageData?: Pick<Message, 'id' | 'content' | 'category'>) => {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     const currentlyFavorite = favorites.includes(messageId)
@@ -87,7 +93,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
       }
       await supabase.from('favorites').insert({ user_id: user.id, message_id: messageId, created_at: now })
     }
-  }, [favorites, supabase])
+  }, [favorites, supabase, user])
 
   const favoritesCount = favorites.length
 

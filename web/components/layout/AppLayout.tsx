@@ -38,12 +38,17 @@ function getPageKey(pathname: string): string {
 function DesktopSidebar() {
   const pathname = usePathname()
   const pageKey = getPageKey(pathname)
-  const { user, profile } = useAuth()
+  const { user, profile, loading } = useAuth()
   const { selectedBeneficiary } = useBeneficiary()
 
   const getInitials = (name: string) => {
     const parts = name.split(' ')
     return parts.map(p => p[0]).join('').toUpperCase().slice(0, 2)
+  }
+
+  const getUserDisplayName = () => {
+    if (!user) return null
+    return user.user_metadata?.first_name || user.email?.split('@')[0] || 'Utilizator'
   }
 
   return (
@@ -84,26 +89,37 @@ function DesktopSidebar() {
       <Link href="/profil" className="glass-card p-4 rounded-2xl cursor-pointer hover:bg-white/60 block">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="w-10 h-10 rounded-full bg-stone-200 overflow-hidden border border-white">
-              {user ? (
+            <div className="w-10 h-10 rounded-full overflow-hidden border border-white">
+              {loading ? (
+                <div className="w-full h-full bg-stone-200 animate-pulse" />
+              ) : user ? (
                 <div className="w-full h-full bg-gradient-to-b from-stone-100 to-stone-300 flex items-center justify-center text-xs font-medium">
                   {user.user_metadata?.first_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
                 </div>
               ) : (
-                <div className="w-full h-full bg-gradient-to-b from-stone-100 to-stone-300 flex items-center justify-center text-xs font-medium">
-                  AB
+                <div className="w-full h-full bg-stone-100 flex items-center justify-center text-stone-400">
+                  <iconify-icon icon="solar:user-linear" width="18" />
                 </div>
               )}
             </div>
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
+            {user && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />}
           </div>
             <div>
-            <p className="text-sm font-medium text-stone-800 leading-none">
-              {user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'Alex B.'}
-            </p>
-            <p className="text-xs text-stone-500 mt-1">
-              Nivel {profile?.total_xp ? Math.floor(profile.total_xp / 250) + 1 : 1}
-            </p>
+            {loading ? (
+              <div className="space-y-2">
+                <div className="h-4 w-20 bg-stone-200 rounded animate-pulse" />
+                <div className="h-3 w-12 bg-stone-200 rounded animate-pulse" />
+              </div>
+            ) : user ? (
+              <>
+                <p className="text-sm font-medium text-stone-800 leading-none">
+                  {getUserDisplayName()}
+                </p>
+                <p className="text-xs text-stone-500 mt-1">
+                  Nivel {profile?.total_xp ? Math.floor(profile.total_xp / 250) + 1 : 1}
+                </p>
+              </>
+            ) : null}
           </div>
         </div>
       </Link>
@@ -199,7 +215,7 @@ function MobileHeader() {
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  const { loading } = useAuth()
+  const { loading, user } = useAuth()
   const { isModalOpen } = useModalOverlay()
 
   useEffect(() => {
@@ -210,7 +226,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
   }, [pathname])
 
   const isPublicPage = pathname === '/login' || pathname.startsWith('/auth/')
-  const showNav = !loading && !isPublicPage && !!pathname
+  
+  // Don't show nav if:
+  // 1. Still loading, OR
+  // 2. User is not logged in (even after loading completes), OR
+  // 3. It's a public page
+  const showNav = !loading && !!user && !isPublicPage && !!pathname
 
   return (
     <div className="min-h-screen">
