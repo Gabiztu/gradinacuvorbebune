@@ -140,9 +140,7 @@ export function AuthForm() {
           return
         }
         setLoading(false)
-        setTimeout(() => {
-          window.location.href = '/'
-        }, 300)
+        router.push('/')
       }
     } catch {
       setError('A apărut o eroare. Încearcă din nou.')

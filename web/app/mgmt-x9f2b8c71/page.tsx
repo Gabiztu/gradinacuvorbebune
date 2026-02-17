@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
@@ -77,7 +77,7 @@ function SkeletonCard() {
 
 function AdminSkeleton() {
   return (
-    <div className="min-h-screen pb-24">
+    <div className="pb-8">
       <header className="mb-8">
         <div className="h-9 w-48 bg-stone-200 rounded animate-pulse mb-2" />
         <div className="h-5 w-40 bg-stone-200 rounded animate-pulse" />
@@ -515,7 +515,7 @@ function ProposalCard({
           className="w-full h-24 p-3 rounded-xl bg-white/60 border border-stone-200 text-stone-700 text-sm mb-4"
         />
       ) : (
-        <p className="text-stone-700 mb-4">{proposal.content}</p>
+        <p className="text-stone-700 mb-4 whitespace-normal break-words">{proposal.content}</p>
       )}
 
       <div className="flex items-center gap-3 flex-wrap">
@@ -594,6 +594,36 @@ export default function AdminPage() {
   
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [deletingMessage, setDeletingMessage] = useState<Message | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const MAX_RETRIES = 3
+
+  const fetchAdminData = useCallback(async (attempt = 0) => {
+    try {
+      setError(null)
+      
+      const { data, rpcError } = await supabase.rpc('get_admin_stats')
+      
+      if (rpcError) {
+        throw rpcError
+      }
+      
+      if (data) {
+        setStats(data as AdminStats)
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') return
+      
+      if (attempt < MAX_RETRIES) {
+        console.log(`Retrying admin stats (${attempt + 1}/${MAX_RETRIES})...`)
+        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)))
+        return fetchAdminData(attempt + 1)
+      }
+      
+      setError('Nu am putut încărca datele. Încearcă din nou.')
+      console.error('Admin stats error after retries:', err)
+    }
+  }, [supabase])
 
   useEffect(() => {
     if (authLoading) return
@@ -656,24 +686,7 @@ export default function AdminPage() {
         supabase.removeChannel(channel)
       }
     }
-  }, [isAdmin, supabase])
-
-  const fetchAdminData = async () => {
-    try {
-      const { data, error } = await supabase.rpc('get_admin_stats')
-      
-      if (error) {
-        console.error('Error fetching admin stats:', error)
-        return
-      }
-      
-      if (data) {
-        setStats(data as AdminStats)
-      }
-    } catch (error) {
-      console.error('Error fetching admin stats:', error)
-    }
-  }
+  }, [isAdmin, supabase, fetchAdminData])
 
   const fetchMessages = async () => {
     try {
@@ -906,8 +919,27 @@ export default function AdminPage() {
     return <AdminSkeleton />
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen pb-24 flex flex-col items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <X className="w-8 h-8 text-red-500" />
+          </div>
+          <p className="text-stone-600 font-medium mb-4">{error}</p>
+          <button 
+            onClick={() => fetchAdminData()}
+            className="px-6 py-3 bg-stone-800 text-white rounded-xl font-medium hover:bg-stone-700 transition-colors"
+          >
+            Încearcă din nou
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen pb-24">
+    <div className="pb-8">
       <header className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tighter text-stone-800 mb-2">
           Admin Dashboard
