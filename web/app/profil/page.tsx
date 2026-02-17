@@ -108,45 +108,38 @@ export default function ProfilPage() {
   const handleSaveName = async () => {
     if (!editName.trim() || !user) return
     
-    console.log('[ProfilePage] Step 1: Starting updateUser...')
+    console.log('[ProfilePage] handleSaveName - Starting...')
     setSaving(true)
     try {
       const supabase = createClient()
       
-      const { data: updateData, error: updateError } = await supabase.auth.updateUser({ 
-        data: { first_name: editName.trim() } 
-      })
+      // Update profiles table directly (this works)
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ first_name: editName.trim() })
+        .eq('id', user.id)
       
-      console.log('[ProfilePage] Step 2: updateUser result:', { 
-        success: !!updateData, 
-        error: updateError?.message ?? 'none' 
-      })
-      
-      if (updateError) {
-        console.error('[ProfilePage] updateUser FAILED:', updateError)
+      if (profileError) {
+        console.error('[ProfilePage] Profile update failed:', profileError.message)
         return
       }
-
-      console.log('[ProfilePage] Step 3: Calling refreshSession...')
       
-      const { data: sessionData, error: sessionError } = await supabase.auth.refreshSession()
+      console.log('[ProfilePage] Profile updated successfully')
       
-      console.log('[ProfilePage] Step 4: refreshSession result:', {
-        success: !!sessionData?.session,
-        error: sessionError?.message ?? 'none'
-      })
-
-      console.log('[ProfilePage] Step 5: Calling refreshUser...')
+      // Update auth metadata in background (fire and forget - don't await)
+      supabase.auth.updateUser({ 
+        data: { first_name: editName.trim() } 
+      }).catch((err: Error) => console.error('[ProfilePage] Auth update failed (non-blocking):', err))
+      
+      // Refresh local state
       await refreshUser()
-      
-      console.log('[ProfilePage] Step 6: Calling refreshProfile...')
       await refreshProfile()
       
-      console.log('[ProfilePage] Step 7: All done!')
+      console.log('[ProfilePage] All done!')
       setIsEditing(false)
       
     } catch (err) {
-      console.error('[ProfilePage] handleSaveName CRASHED:', err)
+      console.error('[ProfilePage] handleSaveName error:', err)
     } finally {
       setSaving(false)
     }
