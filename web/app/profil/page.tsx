@@ -108,16 +108,26 @@ export default function ProfilPage() {
   const handleSaveName = async () => {
     if (!editName.trim() || !user) return
     
+    console.log('[ProfilePage] handleSaveName - userId:', user.id, 'newName:', editName.trim())
     setSaving(true)
     try {
       const supabase = createClient()
-      await supabase.auth.updateUser({
+      const { data, error } = await supabase.auth.updateUser({
         data: { first_name: editName.trim() }
       })
+      
+      if (error) {
+        console.error('[ProfilePage] handleSaveName error:', error.message, error.code)
+        throw error
+      }
+      
+      console.log('[ProfilePage] handleSaveName success:', data)
       await refreshUser()
+      await refreshProfile()
+      router.refresh()
       setIsEditing(false)
     } catch (error) {
-      console.error('Error updating name:', error)
+      console.error('[ProfilePage] Error updating name:', error)
     } finally {
       setSaving(false)
     }

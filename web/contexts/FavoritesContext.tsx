@@ -26,6 +26,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   const fetchFavorites = useCallback(async () => {
     if (!user) {
+      console.log('[FavoritesContext] fetchFavorites - no user, clearing list')
       setFavorites([])
       setFavoritesMessages([])
       setLoading(false)
@@ -33,14 +34,18 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const { data } = await supabase
+      console.log('[FavoritesContext] fetchFavorites - userId:', user.id)
+      const { data, error } = await supabase
         .from('favorites')
         .select('message_id, created_at, messages:message_id(id, content, category)')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(50)
       
-      if (data) {
+      if (error) {
+        console.error('[FavoritesContext] fetchFavorites error:', error.message, error.code)
+      } else if (data) {
+        console.log('[FavoritesContext] fetchFavorites fetched:', data.length, 'items')
         const ids = data.map((f: any) => f.message_id)
         setFavorites(ids)
         
@@ -56,6 +61,8 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
             return acc
           }, [])
         setFavoritesMessages(messages as Message[])
+      } else {
+        console.warn('[FavoritesContext] fetchFavorites returned NULL for userId:', user.id)
       }
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return
@@ -78,11 +85,14 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
     const currentlyFavorite = favorites.includes(messageId)
     const now = new Date().toISOString()
+    console.log('[FavoritesContext] toggleFavorite - messageId:', messageId, 'currentlyFavorite:', currentlyFavorite)
 
     if (currentlyFavorite) {
       setFavorites(prev => prev.filter(id => id !== messageId))
       setFavoritesMessages(prev => prev.filter(m => m.id !== messageId))
-      await supabase.from('favorites').delete().eq('user_id', user.id).eq('message_id', messageId)
+      const { error } = await supabase.from('favorites').delete().eq('user_id', user.id).eq('message_id', messageId)
+      if (error) console.error('[FavoritesContext] toggleFavorite delete error:', error.message)
+      else console.log('[FavoritesContext] toggleFavorite delete success')
     } else {
       setFavorites(prev => [messageId, ...prev])
       if (messageData) {
@@ -91,7 +101,9 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
           return [messageData as Message, ...prev]
         })
       }
-      await supabase.from('favorites').insert({ user_id: user.id, message_id: messageId, created_at: now })
+      const { error } = await supabase.from('favorites').insert({ user_id: user.id, message_id: messageId, created_at: now })
+      if (error) console.error('[FavoritesContext] toggleFavorite insert error:', error.message)
+      else console.log('[FavoritesContext] toggleFavorite insert success')
     }
   }, [favorites, supabase, user])
 
