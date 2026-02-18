@@ -83,7 +83,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }, [user, authLoading, supabase])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchFavorites()

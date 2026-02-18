@@ -68,7 +68,7 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
     } finally {
       setLoading(false)
     }
-  }, [user, authLoading, supabase])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchBeneficiaries()
