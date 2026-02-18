@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { X, Plus, Pencil, Trash2, Search, Users, MessageCircle, Copy, Smartphone, Heart } from 'lucide-react'
 import { toast } from 'sonner'
@@ -577,7 +577,6 @@ const categoryLabels: Record<string, string> = {
 export default function AdminPage() {
   const router = useRouter()
   const { user, profile, loading: authLoading } = useAuth()
-  const supabase = createClient()
 
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
   const [stats, setStats] = useState<AdminStats | null>(null)

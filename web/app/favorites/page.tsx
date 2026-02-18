@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -13,7 +13,6 @@ import type { Message } from '@/types'
 
 export default function FavoritesPage() {
   const { user } = useAuth()
-  const supabase = createClient()
   const [favorites, setFavorites] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)

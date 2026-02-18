@@ -29,6 +29,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshProfile = useCallback(async () => {
     if (!isMounted.current) return
     
+    // DEBUG: Show what triggered this refresh
+    console.log('[AuthContext] refreshProfile triggered, stack:', new Error().stack?.split('\n')[2])
+    
     try {
       // ALWAYS get fresh session - don't rely on closure
       const { data: { session } } = await supabase.auth.getSession()

@@ -4,7 +4,7 @@ import { useState, useEffect, use } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowLeft, Star } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import type { Message, MessageCategory } from '@/types'
 import { useFavorites } from '@/contexts/FavoritesContext'
 import { useSearchParams } from 'next/navigation'
@@ -111,7 +111,6 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
 
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
 
   const beneficiaryId = searchParams.get('beneficiaryId')
 

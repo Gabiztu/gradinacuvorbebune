@@ -25,6 +25,9 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth()
 
   const fetchFavorites = useCallback(async () => {
+    // DEBUG: Show what triggered this fetch
+    console.log('[FavoritesContext] fetchFavorites triggered, user:', user?.id, 'authLoading:', authLoading, 'stack:', new Error().stack?.split('\n')[2])
+    
     // DON'T clear data while auth is still loading - wait for auth to complete
     if (!user) {
       if (!authLoading) {
@@ -80,7 +83,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false)
     }
-  }, [user, authLoading, supabase])
+  }, [user, supabase])
 
   useEffect(() => {
     fetchFavorites()

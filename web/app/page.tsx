@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils'
 import type { Message } from '@/types'
 import { toast } from 'sonner'
 import { logMessageAction } from '@/lib/message-actions'
+import { supabase } from '@/lib/supabase/client'
 
 export default function DashboardPage() {
   const { user, profile, loading: authLoading, refreshProfile } = useAuth()
@@ -34,9 +35,6 @@ export default function DashboardPage() {
   useEffect(() => {
     if (mounted && user) {
       const fetchMessages = async () => {
-        const { createClient } = await import('@/lib/supabase/client')
-        const supabase = createClient()
-        
         const { data } = await supabase
           .from('messages')
           .select('*')
@@ -90,9 +88,6 @@ export default function DashboardPage() {
 
   const handleWhatsApp = async () => {
     if (!user || !dailyMessage) return
-
-    const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
 
     const today = new Date().toISOString().split('T')[0]
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]
@@ -223,9 +218,6 @@ export default function DashboardPage() {
                 <button
                   onClick={async () => {
                     if (!user || !dailyMessage) return
-
-                    const { createClient } = await import('@/lib/supabase/client')
-                    const supabase = createClient()
 
                     const today = new Date().toISOString().split('T')[0]
                     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]

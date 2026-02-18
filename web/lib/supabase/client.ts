@@ -2,7 +2,7 @@ import { createBrowserClient } from '@supabase/ssr'
 
 let clientInstance: ReturnType<typeof createBrowserClient> | null = null
 
-export function createClient() {
+function createClientInternal() {
   if (typeof window === 'undefined') {
     return createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -69,3 +69,7 @@ export function createClient() {
 
   return clientInstance
 }
+
+export const supabase = createClientInternal()
+
+export { createClientInternal as createClient }

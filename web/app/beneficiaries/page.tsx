@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
 import { useModal } from '@/contexts/ModalContext'
 import { Card } from '@/components/ui/Card'
@@ -48,7 +48,6 @@ const ageRangeColors: Record<BeneficiaryAgeRange, string> = {
 
 export default function BeneficiariesPage() {
   const { user } = useAuth()
-  const supabase = createClient()
   const { openModal, closeModal } = useModal()
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([])
   const [beneficiariesCount, setBeneficiariesCount] = useState(0)

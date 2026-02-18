@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { History, Star } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useFavorites } from '@/contexts/FavoritesContext'
 import MagicBento from '@/components/bento/MagicBento'
@@ -63,7 +63,6 @@ const libraryVariants = {
 export default function LibraryPage() {
   const { user } = useAuth()
   const { favoritesCount } = useFavorites()
-  const supabase = createClient()
   const [showFavorites, setShowFavorites] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [historyData, setHistoryData] = useState<HistoryItem[]>([])

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useBeneficiary } from '@/contexts/BeneficiaryContext'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import { X, Check } from 'lucide-react'
 
 export default function ProfilPage() {
@@ -53,8 +53,6 @@ export default function ProfilPage() {
     setDeleteError(null)
     
     try {
-      const supabase = createClient()
-      
       await supabase.from('profiles').delete().eq('id', user.id)
       await supabase.from('beneficiaries').delete().eq('user_id', user.id)
       await supabase.from('favorites').delete().eq('user_id', user.id)
@@ -110,8 +108,6 @@ export default function ProfilPage() {
     console.log('[ProfilePage] handleSaveName - Starting...')
     setSaving(true)
     try {
-      const supabase = createClient()
-      
       // Update profiles table directly (this works)
       const { error: profileError } = await supabase
         .from('profiles')

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -20,7 +20,6 @@ export default function MessagePage() {
   const router = useRouter()
   const messageId = params.id as string
   const { user, profile, refreshProfile } = useAuth()
-  const supabase = createClient()
 
   const [message, setMessage] = useState<Message | null>(null)
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([])

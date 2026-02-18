@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { useFavorites } from '@/contexts/FavoritesContext'
 import { useBeneficiary } from '@/contexts/BeneficiaryContext'
 import { useAuth } from '@/contexts/AuthContext'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import { ScrollableCarousel } from '@/components/ui/ScrollableCarousel'
 import Link from 'next/link'
@@ -203,7 +203,6 @@ function CustomMessageModal({
   const [submitting, setSubmitting] = useState(false)
   const { user, profile } = useAuth()
   const { selectedBeneficiary } = useBeneficiary()
-  const supabase = createClient()
   const router = useRouter()
 
   const handleSubmit = async () => {
@@ -306,7 +305,6 @@ function BibliotecaContent() {
   const [loadingMessages, setLoadingMessages] = useState(true)
   const searchParams = useSearchParams()
   const beneficiaryId = searchParams.get('beneficiaryId')
-  const supabase = createClient()
 
   useEffect(() => {
     const fetchMessages = async () => {
