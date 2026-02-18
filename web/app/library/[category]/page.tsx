@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { ChevronLeft, Heart, ChevronRight, Sparkles, Star, History } from 'lucide-react'
@@ -36,7 +36,6 @@ export default function CategoryPage() {
   const params = useParams()
   const categoryId = params.category as string
   const { favoritesCount, isFavorite, toggleFavorite } = useFavorites()
-  const supabase = createClient()
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)

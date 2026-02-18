@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useBeneficiary } from '@/contexts/BeneficiaryContext'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client'
 import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Message } from '@/types'
@@ -18,7 +18,6 @@ export default function PersonalizePage({ params }: { params: Promise<{ id: stri
   const searchParams = useSearchParams()
   const { user, profile, refreshProfile } = useAuth()
   const { beneficiaries, selectedBeneficiary, setSelectedBeneficiary } = useBeneficiary()
-  const supabase = createClient()
 
   const messageId = resolvedParams.id
   const beneficiaryId = searchParams.get('beneficiaryId')
