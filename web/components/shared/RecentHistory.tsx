@@ -98,8 +98,6 @@ export function RecentHistory() {
         if (error) throw error
 
         if (data) {
-          console.log('Raw data from Supabase:', data)
-
           const processedData = data.map((item: any) => {
             const rawMsg = item.messages
             const msg = Array.isArray(rawMsg) ? rawMsg[0] : rawMsg

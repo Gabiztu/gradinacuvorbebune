@@ -25,14 +25,8 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth()
 
   const fetchFavorites = useCallback(async () => {
-    // DEBUG: Show what triggered this fetch
-    console.log('[FavoritesContext] fetchFavorites triggered, user:', user?.id, 'authLoading:', authLoading, 'stack:', new Error().stack?.split('\n')[2])
-    
-    // DON'T clear data while auth is still loading - wait for auth to complete
     if (!user) {
       if (!authLoading) {
-        // Only clear if auth is DONE and there's truly no user (logged out)
-        console.log('[FavoritesContext] fetchFavorites - no user (logged out), clearing list')
         setFavorites([])
         setFavoritesMessages([])
       }
@@ -41,24 +35,16 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      console.log('[FavoritesContext] fetchFavorites - userId:', user.id)
       const { data, error } = await supabase
         .from('favorites')
         .select('message_id, created_at, messages:message_id(id, content, category)')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(50)
-      
-      console.log('[FavoritesContext] Supabase response:', { 
-        data: data?.length ?? 'null', 
-        error: error?.message ?? 'none',
-        userId: user.id 
-      })
 
       if (error) {
         console.error('[FavoritesContext] fetchFavorites error:', error.message, error.code)
       } else if (data) {
-        console.log('[FavoritesContext] fetchFavorites fetched:', data.length, 'items')
         const ids = data.map((f: any) => f.message_id)
         setFavorites(ids)
         
@@ -74,12 +60,10 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
             return acc
           }, [])
         setFavoritesMessages(messages as Message[])
-      } else {
-        console.warn('[FavoritesContext] fetchFavorites returned NULL for userId:', user.id)
       }
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return
-      console.error('[FavoritesContext] fetchFavorites error:', err)
+      console.error('[FavoritesContext] fetchFavorites exception:', err)
     } finally {
       setLoading(false)
     }
