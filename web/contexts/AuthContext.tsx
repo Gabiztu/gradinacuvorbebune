@@ -12,7 +12,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>
   signUp: (email: string, password: string, role: 'parent' | 'teacher') => Promise<{ error: Error | null }>
   signOut: () => Promise<void>
-  refreshProfile: () => Promise<void>
+  refreshProfile: (userId?: string) => Promise<void>
   refreshUser: () => Promise<void>
   clearInvalidSession: () => Promise<void>
 }
@@ -26,49 +26,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
   const isMounted = useRef(true)
 
-  const refreshProfile = useCallback(async () => {
+  const refreshProfile = useCallback(async (userIdParam?: string) => {
     if (!isMounted.current) return
-    
-    // DEBUG: Show what triggered this refresh
-    console.log('[AuthContext] refreshProfile triggered, stack:', new Error().stack?.split('\n')[2])
-    
-    try {
-      // ALWAYS get fresh session - don't rely on closure
-      const { data: { session } } = await supabase.auth.getSession()
-      const userId = session?.user?.id
-      
-      console.log('[AuthContext] refreshProfile - session:', session ? 'exists' : 'null', 'userId:', userId)
-      
-      if (!userId) {
-        console.warn('[AuthContext] refreshProfile - NO userId in session')
-        if (isMounted.current) {
-          setUser(null)
-          setProfile(null)
-        }
-        return
-      }
 
+    // Use passed userId - no getSession() call
+    const userId = userIdParam
+    if (!userId) return
+
+    try {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .maybeSingle()
 
-      console.log('[AuthContext] Profile response:', { 
-        data: profileData ? 'exists' : 'null', 
-        error: profileError?.message ?? 'none',
-        userId: userId
-      })
-
       if (profileError) {
-        console.error('[AuthContext] Error fetching profile:', profileError.message, profileError.code)
+        console.error('[AuthContext] Error fetching profile:', profileError.message)
       } else if (profileData) {
-        console.log('[AuthContext] Profile fetched successfully:', profileData.id, 'xp:', profileData.total_xp)
         if (isMounted.current) {
           setProfile(profileData as Profile)
         }
-      } else {
-        console.warn('[AuthContext] Profile returned NULL or EMPTY for userId:', userId)
       }
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return
@@ -90,10 +67,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase])
 
   useEffect(() => {
+    isMounted.current = true
     let isCleanup = false
 
     const initAuth = async () => {
-      // Safety timeout - force loading=false after 3 seconds
       const timeoutId = setTimeout(() => {
         if (isMounted.current) {
           setLoading(false)
@@ -102,50 +79,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       try {
         const { data, error } = await supabase.auth.getSession()
-
-        // Clear timeout if request completed
         clearTimeout(timeoutId)
 
         if (error) {
-          if (isMounted.current) {
-            setLoading(false)
-          }
+          if (isMounted.current) setLoading(false)
           return
         }
 
         if (data?.session?.user) {
           setUser(data.session.user)
-          // Don't await - let profile load in background
-          refreshProfile().finally(() => {
-            if (isMounted.current) {
-              setLoading(false)
-            }
+          refreshProfile(data.session.user.id).finally(() => {
+            if (isMounted.current) setLoading(false)
           })
         } else {
-          if (isMounted.current) {
-            setLoading(false)
-          }
+          if (isMounted.current) setLoading(false)
         }
       } catch (err) {
         clearTimeout(timeoutId)
         if (err instanceof Error && err.name === 'AbortError') return
-        if (isMounted.current) {
-          setLoading(false)
-        }
+        if (isMounted.current) setLoading(false)
       }
     }
 
     initAuth()
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event: string, session: Session | null) => {
         if (isCleanup || !isMounted.current) return
 
         try {
           if (session) {
-            setUser(session.user)
-            await refreshProfile()
+            setUser(prev => {
+              if (prev?.id === session.user.id) {
+                return prev
+              }
+              // Only refresh profile for genuinely new user
+              refreshProfile(session.user.id)
+              return session.user
+            })
           } else {
             setUser(null)
             setProfile(null)
@@ -223,7 +194,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (updatedUser) {
         setUser(updatedUser)
-        await refreshProfile()
+        await refreshProfile(updatedUser.id)
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') return

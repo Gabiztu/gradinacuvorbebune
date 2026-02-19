@@ -26,14 +26,8 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
   const { user, loading: authLoading } = useAuth()
 
   const fetchBeneficiaries = useCallback(async () => {
-    // DEBUG: Show what triggered this fetch
-    console.log('[BeneficiaryContext] fetchBeneficiaries triggered, user:', user?.id, 'authLoading:', authLoading, 'stack:', new Error().stack?.split('\n')[2])
-    
-    // DON'T clear data while auth is still loading - wait for auth to complete
     if (!user) {
       if (!authLoading) {
-        // Only clear if auth is DONE and there's truly no user (logged out)
-        console.log('[BeneficiaryContext] fetchBeneficiaries - no user (logged out), clearing list')
         setBeneficiaries([])
       }
       setLoading(false)
@@ -41,30 +35,22 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
     }
 
     try {
-      console.log('[BeneficiaryContext] fetchBeneficiaries - userId:', user.id)
       const { data, error } = await supabase
         .from('beneficiaries')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
-      console.log('[BeneficiaryContext] Supabase response:', { 
-        data: data?.length ?? 'null', 
-        error: error?.message ?? 'none',
-        userId: user.id 
-      })
-
       if (error) {
         console.error('[BeneficiaryContext] Beneficiaries fetch error:', error.message, error.code)
       } else if (data) {
-        console.log('[BeneficiaryContext] Beneficiaries fetched:', data.length, 'items')
         setBeneficiaries(data as Beneficiary[])
       } else {
-        console.warn('[BeneficiaryContext] Beneficiaries returned NULL for userId:', user.id)
+        setBeneficiaries([])
       }
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return
-      console.error('[BeneficiaryContext] Beneficiaries fetch error:', err)
+      console.error('[BeneficiaryContext] Beneficiaries fetch exception:', err)
     } finally {
       setLoading(false)
     }
@@ -77,7 +63,6 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
   const addBeneficiary = useCallback(async (beneficiary: Omit<Beneficiary, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     if (!user) throw new Error('User not authenticated')
 
-    console.log('[BeneficiaryContext] addBeneficiary - userId:', user.id)
     const { data, error } = await supabase
       .from('beneficiaries')
       .insert({
@@ -92,7 +77,6 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
       throw error
     }
 
-    console.log('[BeneficiaryContext] addBeneficiary success:', data)
     const newBeneficiary = data as Beneficiary
     setBeneficiaries(prev => [newBeneficiary, ...prev])
     
@@ -104,7 +88,6 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
   }, [selectedBeneficiary, supabase, user])
 
   const updateBeneficiary = useCallback(async (id: string, data: Partial<Beneficiary>) => {
-    console.log('[BeneficiaryContext] updateBeneficiary - id:', id, 'data:', data)
     const { error } = await supabase
       .from('beneficiaries')
       .update(data)
@@ -115,7 +98,6 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
       throw error
     }
 
-    console.log('[BeneficiaryContext] updateBeneficiary success')
     setBeneficiaries(prev => prev.map(b => b.id === id ? { ...b, ...data } : b))
     
     if (selectedBeneficiary?.id === id) {
@@ -124,7 +106,6 @@ export function BeneficiaryProvider({ children }: { children: React.ReactNode })
   }, [selectedBeneficiary, supabase])
 
   const deleteBeneficiary = useCallback(async (id: string) => {
-    console.log('[BeneficiaryContext] deleteBeneficiary - id:', id)
     const { error } = await supabase
       .from('beneficiaries')
       .delete()

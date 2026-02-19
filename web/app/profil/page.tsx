@@ -5,10 +5,13 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useBeneficiary } from '@/contexts/BeneficiaryContext'
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { X, Check } from 'lucide-react'
 
+
+
 export default function ProfilPage() {
+  const supabase = createClient()
   const { user, profile, loading: authLoading, signOut, refreshProfile, refreshUser } = useAuth()
   const { beneficiaries } = useBeneficiary()
   const [mounted, setMounted] = useState(false)
@@ -19,6 +22,7 @@ export default function ProfilPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [showDeleteLoading, setShowDeleteLoading] = useState(false)
   const [showPrivacyModal, setShowPrivacyModal] = useState(false)
   const router = useRouter()
 
@@ -47,26 +51,31 @@ export default function ProfilPage() {
   }
 
   const handleDeleteAccount = async () => {
-    if (!user) return
-    
     setDeleting(true)
     setDeleteError(null)
-    
+    setShowDeleteLoading(true)
+
     try {
-      await supabase.from('profiles').delete().eq('id', user.id)
-      await supabase.from('beneficiaries').delete().eq('user_id', user.id)
-      await supabase.from('favorites').delete().eq('user_id', user.id)
-      await supabase.from('history').delete().eq('user_id', user.id)
-      
-      await supabase.auth.admin.deleteUser(user.id)
-      
-      await supabase.auth.signOut({ scope: 'global' })
+      const response = await fetch('/api/delete-account', {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        console.error('Delete failed:', data)
+        setDeleteError(data.error || 'Nu am putut șterge contul. Încearcă din nou.')
+        return
+      }
+
+      await supabase.auth.signOut()
       localStorage.clear()
       sessionStorage.clear()
-      
+
       window.location.replace('/login')
     } catch (error) {
-      console.error('Error deleting account:', error)
+      console.error('Delete account error:', error)
       setDeleteError('Nu am putut șterge contul. Încearcă din nou.')
     } finally {
       setDeleting(false)
@@ -102,33 +111,26 @@ export default function ProfilPage() {
   const level = Math.floor(xp / 250) + 1
   const streak = profile?.streak_count || 0
 
-  const handleSaveName = async () => {
+    const handleSaveName = async () => {
     if (!editName.trim() || !user) return
-    
-    console.log('[ProfilePage] handleSaveName - Starting...')
+
     setSaving(true)
     try {
-      // Update profiles table directly (this works)
-      const { error: profileError } = await supabase
+      const { error } = await supabase
         .from('profiles')
         .update({ first_name: editName.trim() })
         .eq('id', user.id)
-      
-      if (profileError) {
-        console.error('[ProfilePage] Profile update failed:', profileError.message)
+
+      if (error) {
+        console.error('[ProfilePage] Update failed:', error)
         return
       }
-      
-      console.log('[ProfilePage] Profile updated successfully')
-      
-      // Refresh profile state only
-      await refreshProfile()
-      
-      console.log('[ProfilePage] All done!')
+
+      await refreshProfile(user.id)
       setIsEditing(false)
-      
+
     } catch (err) {
-      console.error('[ProfilePage] handleSaveName error:', err)
+      console.error('[ProfilePage] Error:', err)
     } finally {
       setSaving(false)
     }
@@ -342,6 +344,16 @@ export default function ProfilPage() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Delete Loading Overlay */}
+      {showDeleteLoading && (
+        <div className="fixed inset-0 z-[100] bg-white/80 backdrop-blur-sm flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-green-100 border-t-green-500 rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-stone-600 font-medium">Se șterge contul...</p>
+          </div>
+        </div>
       )}
 
       {/* Privacy Policy Modal */}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Heart, Mail, AlertCircle, CheckCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
+import type { Session } from '@supabase/supabase-js'
 import { PasswordInput } from './PasswordInput'
 import { useTransientPassword } from '@/hooks/useTransientPassword'
 
@@ -18,6 +19,9 @@ export function AuthForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [emailError, setEmailError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [showSignupSuccess, setShowSignupSuccess] = useState(false)
+  const [resending, setResending] = useState(false)
   const [touched, setTouched] = useState({ email: false, password: false })
   const [mounted, setMounted] = useState(false)
 
@@ -33,6 +37,15 @@ export function AuthForm() {
       }
     }
     checkAuth()
+  }, [router])
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string, session: Session | null) => {
+      if (event === 'SIGNED_IN' && session) {
+        router.push('/')
+      }
+    })
+    return () => subscription.unsubscribe()
   }, [router])
 
   const validateEmail = (value: string): string | null => {
@@ -113,7 +126,8 @@ export function AuthForm() {
           email,
           password,
           options: {
-            data: { role }
+            data: { role },
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
           }
         })
       } else {
@@ -135,7 +149,16 @@ export function AuthForm() {
         setError(errorMsg)
       } else {
         if (isSignUp && result.data.session === null) {
-          setError('Verifică email-ul pentru confirmare.')
+          const identities = result.data.user?.identities ?? []
+
+          if (identities.length === 0) {
+            setError('Acest email este deja înregistrat. Încearcă să te loghezi.')
+            setLoading(false)
+            return
+          }
+
+          setSuccessMessage('Ți-am trimis un email de confirmare! Verifică inbox-ul (și folderul Spam) pentru a activa contul.')
+          setShowSignupSuccess(true)
           setLoading(false)
           return
         }
@@ -152,8 +175,35 @@ export function AuthForm() {
   const toggleMode = () => {
     setIsSignUp(!isSignUp)
     setError(null)
+    setSuccessMessage(null)
+    setShowSignupSuccess(false)
     setEmailError(null)
     setTouched({ email: false, password: false })
+  }
+
+  const handleResendConfirmation = async () => {
+    if (!email) return
+    
+    setResending(true)
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        }
+      })
+      
+      if (!error) {
+        setSuccessMessage('Email retrimis! Verifică inbox-ul (și Spam).')
+      } else {
+        setError('Nu am putut retrimite email-ul. Încearcă din nou.')
+      }
+    } catch {
+      setError('A apărut o eroare. Încearcă din nou.')
+    } finally {
+      setResending(false)
+    }
   }
 
   if (!mounted) return null
@@ -199,6 +249,23 @@ export function AuthForm() {
               <div className="flex items-center gap-3 p-4 bg-red-50/80 backdrop-blur-lg border border-red-200/50 rounded-xl text-red-700 text-sm">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 {error}
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-4 bg-green-50/80 backdrop-blur-lg border border-green-200/50 rounded-xl text-green-700 text-sm">
+                  <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                  {successMessage}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleResendConfirmation}
+                  disabled={resending}
+                  className="w-full py-2.5 rounded-xl border border-stone-300 text-stone-600 text-sm font-medium hover:bg-stone-50 transition-colors disabled:opacity-50"
+                >
+                  {resending ? 'Se trimite...' : 'Retrimite email-ul de confirmare'}
+                </button>
               </div>
             )}
 
