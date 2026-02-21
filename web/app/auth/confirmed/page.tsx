@@ -3,41 +3,23 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-export default function ConfirmPage() {
+export default function ConfirmedPage() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   useEffect(() => {
-    const verifyEmail = async () => {
+    const syncSession = async () => {
       const supabase = createClient()
-      
-      const params = new URLSearchParams(window.location.search)
-      const code = params.get('code')
 
-      if (!code) {
+      const { data: { session }, error } = await supabase.auth.getSession()
+
+      if (session && !error) {
+        setStatus('success')
+      } else {
         setStatus('error')
-        setErrorMessage('Link-ul de confirmare este invalid.')
-        return
-      }
-
-      try {
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
-
-        if (error) {
-          console.error('Verification error:', error.message)
-          setStatus('error')
-          setErrorMessage('Ups, a aparut o eroare, te rog reincearca.')
-        } else {
-          setStatus('success')
-        }
-      } catch (err) {
-        console.error('Unexpected error:', err)
-        setStatus('error')
-        setErrorMessage('Ups, a aparut o eroare, te rog reincearca.')
       }
     }
 
-    verifyEmail()
+    syncSession()
   }, [])
 
   return (
@@ -62,9 +44,9 @@ export default function ConfirmPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">Contul a fost confirmat!</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">Contul tău a fost confirmat!</h2>
             <p className="text-gray-600 mb-4">Acum te poți întoarce pe pagina de login.</p>
-            <p className="text-sm text-gray-500">Poți închide această tab-ul.</p>
+            <p className="text-sm text-gray-500">Poți închide acest tab.</p>
           </>
         )}
 
@@ -76,7 +58,7 @@ export default function ConfirmPage() {
               </svg>
             </div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Eroare la confirmare</h2>
-            <p className="text-gray-600">{errorMessage}</p>
+            <p className="text-gray-600">Ups, a aparut o eroare, te rog reincearca.</p>
           </>
         )}
       </div>
