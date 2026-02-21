@@ -9,6 +9,7 @@ export async function GET(request: Request) {
     headers: { 'Content-Type': 'text/plain' }
   })
 
+  /* // COMMENTED OUT FOR TESTING
   const fullUrl = request.url
   console.log('[auth/callback] FULL URL:', fullUrl)
   
@@ -70,5 +71,6 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth`)
+  return NextResponse.redirect(`${origin}/login?error=auth')
+  */
 }
