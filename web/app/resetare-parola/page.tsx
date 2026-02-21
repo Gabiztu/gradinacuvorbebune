@@ -68,6 +68,8 @@ function ResetPasswordContent() {
       if (error) {
         setErrorMessage('Eroare la actualizarea parolei: ' + error.message)
       } else {
+        // Sign out to require manual login with new password
+        await supabase.auth.signOut()
         setStatus('success')
         setTimeout(() => {
           window.location.href = '/login'
