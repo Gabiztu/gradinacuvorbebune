@@ -12,20 +12,16 @@ export default function ConfirmPage() {
       const supabase = createClient()
       
       const params = new URLSearchParams(window.location.search)
-      const token = params.get('token')
-      const type = params.get('type')
+      const code = params.get('code')
 
-      if (!token || !type) {
+      if (!code) {
         setStatus('error')
         setErrorMessage('Link-ul de confirmare este invalid.')
         return
       }
 
       try {
-        const { error } = await supabase.auth.verifyOtp({
-          token,
-          type: type as 'signup' | 'email_change' | 'recovery',
-        })
+        const { error } = await supabase.auth.exchangeCodeForSession(code)
 
         if (error) {
           console.error('Verification error:', error.message)
