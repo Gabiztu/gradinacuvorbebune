@@ -3,6 +3,12 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // Skip middleware entirely for auth callback routes - they handle their own auth
+  if (pathname.startsWith('/auth/callback') || pathname.startsWith('/auth/confirmed')) {
+    return NextResponse.next()
+  }
+
   const isPublicRoute = pathname === '/login' || pathname.startsWith('/auth/')
   const isPublicFile = pathname.match(/\.(ico|png|jpg|svg|json|webmanifest)$/)
 
