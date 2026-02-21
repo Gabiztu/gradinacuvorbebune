@@ -28,15 +28,26 @@ export async function GET(request: Request) {
 
   // Handle email confirmation with token_hash
   if (tokenHash && type === 'signup') {
-    const { error } = await supabase.auth.verifyOtp({
+    console.log('[auth/callback] Attempting verifyOtp with token_hash:', tokenHash.substring(0, 10) + '...')
+    
+    const { data, error } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
       type: 'signup',
+    })
+
+    console.log('[auth/callback] verifyOtp result:', {
+      success: !error,
+      error: error?.message,
+      errorCode: error?.status,
+      hasSession: !!data?.session,
     })
 
     if (!error) {
       return NextResponse.redirect(`${origin}/auth/confirmed`)
     }
-    return NextResponse.redirect(`${origin}/login?error=auth`)
+    
+    // Redirect with the actual error message
+    return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(error.message)}`)
   }
 
   // Handle OAuth / PKCE flow with code
