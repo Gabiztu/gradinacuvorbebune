@@ -5,11 +5,11 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Skip middleware entirely for auth callback routes - they handle their own auth
-  if (pathname.startsWith('/auth/callback') || pathname.startsWith('/auth/confirmed')) {
+  if (pathname.startsWith('/auth/callback')) {
     return NextResponse.next()
   }
 
-  const isPublicRoute = pathname === '/login' || pathname.startsWith('/auth/')
+  const isPublicRoute = pathname === '/login' || pathname.startsWith('/auth/') || pathname === '/cont-confirmat'
   const isPublicFile = pathname.match(/\.(ico|png|jpg|svg|json|webmanifest)$/)
 
   const supabaseResponse = NextResponse.next()
