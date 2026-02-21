@@ -215,6 +215,12 @@ function MobileHeader() {
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
+  
+  // Skip layout for standalone pages
+  if (pathname === '/cont-confirmat' || pathname === '/resetare-parola') {
+    return <>{children}</>
+  }
+  
   const { loading, user } = useAuth()
   const { isModalOpen } = useModalOverlay()
 
