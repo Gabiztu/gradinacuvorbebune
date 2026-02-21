@@ -4,8 +4,13 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Skip middleware entirely for auth callback routes - they handle their own auth
+  // Skip middleware entirely for auth callback routes
   if (pathname.startsWith('/auth/callback')) {
+    return NextResponse.next()
+  }
+
+  // Skip middleware for email confirmation page
+  if (pathname === '/cont-confirmat') {
     return NextResponse.next()
   }
 
