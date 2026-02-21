@@ -23,6 +23,8 @@ export function AuthForm() {
   const [showSignupSuccess, setShowSignupSuccess] = useState(false)
   const [resending, setResending] = useState(false)
   const [touched, setTouched] = useState({ email: false, password: false })
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [resetEmailSent, setResetEmailSent] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   const passwordField = useTransientPassword(isSignUp ? 'signup' : 'login')
@@ -206,6 +208,35 @@ export function AuthForm() {
     }
   }
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    
+    const emailErr = validateEmail(email)
+    if (emailErr) {
+      setEmailError(emailErr)
+      setError('Te rog introdu un email valid.')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/resetare-parola`,
+      })
+
+      if (error) {
+        setError('Nu am putut trimite email-ul de resetare. Încearcă din nou.')
+      } else {
+        setResetEmailSent(true)
+      }
+    } catch {
+      setError('A apărut o eroare. Încearcă din nou.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   if (!mounted) return null
 
   return (
@@ -235,22 +266,84 @@ export function AuthForm() {
         </p>
 
         <span className="px-4 py-1.5 rounded-full bg-stone-100 text-stone-600 text-xs font-medium border border-stone-200 mb-6">
-          {isSignUp ? 'Creează-ți contul' : 'Autentificare'}
+          {isSignUp ? 'Creează-ți contul' : showForgotPassword ? 'Resetare parolă' : 'Autentificare'}
         </span>
 
-        <motion.div 
-          key={isSignUp ? 'auth-signup' : 'auth-login'}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-sm glass-panel rounded-3xl p-6"
-        >
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {error && (
-              <div className="flex items-center gap-3 p-4 bg-red-50/80 backdrop-blur-lg border border-red-200/50 rounded-xl text-red-700 text-sm">
-                <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                {error}
-              </div>
-            )}
+          <motion.div 
+            key={isSignUp ? 'auth-signup' : 'auth-login'}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`w-full max-w-sm glass-panel rounded-3xl ${!isSignUp && showForgotPassword ? 'px-6 pt-6 pb-4' : 'p-6'}`}
+          >
+            {!isSignUp && showForgotPassword ? (
+              // Forgot Password Form
+              <form onSubmit={(e) => { e.preventDefault(); handleForgotPassword(e as any) }} className="space-y-3 mb-0">
+                {error && (
+                  <div className="flex items-center gap-3.5 p-3 bg-red-50/80 backdrop-blur-lg border border-red-200/50 rounded-xl text-red-700 text-sm">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                    {error}
+                  </div>
+                )}
+
+                {resetEmailSent ? (
+                  <div className="p-3 bg-green-50/80 backdrop-blur-lg border border-green-200/50 rounded-xl text-green-700 text-sm">
+                    <CheckCircle className="w-5 h-5 inline-block mr-2" />
+                    Am trimis un email cu instrucțiuni pentru resetarea parolei. Verifică inbox-ul (și Spam).
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-stone-500">
+                      Introdu email-ul tău și îți vom trimite un link pentru a reseta parola.
+                    </p>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-stone-700 ml-1">
+                        Email
+                      </label>
+                      <div className="relative group">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400 group-focus-within:text-stone-600 transition-colors" />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur-lg border border-white/40 focus:border-stone-400/50 rounded-xl focus:outline-none"
+                          placeholder="email@exemplu.com"
+                        />
+                      </div>
+                    </div>
+
+                    <button 
+                      type="submit" 
+                      className="w-full py-3 rounded-xl bg-stone-800 text-stone-50 font-medium text-sm transition-all shadow-lg hover:bg-stone-700 disabled:opacity-50"
+                      disabled={loading}
+                    >
+                      {loading ? 'Se trimite...' : 'Trimite email de resetare'}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowForgotPassword(false)
+                        setResetEmailSent(false)
+                        setError(null)
+                        setEmail('')
+                      }}
+                      className="w-full py-1 -mt-1 text-sm text-stone-500 hover:text-stone-700 transition-colors"
+                    >
+                      Înapoi la login
+                    </button>
+                  </>
+                )}
+              </form>
+            ) : (
+              // Login / Signup Form
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {error && (
+                  <div className="flex items-center gap-3 p-4 bg-red-50/80 backdrop-blur-lg border border-red-200/50 rounded-xl text-red-700 text-sm">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                    {error}
+                  </div>
+                )}
 
             {successMessage && (
               <div className="space-y-3">
@@ -355,6 +448,18 @@ export function AuthForm() {
               onBlur={handlePasswordBlur}
             />
 
+            {!isSignUp && !showForgotPassword && (
+              <div className="text-center -mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-stone-500 hover:text-stone-700 transition-colors underline decoration-dotted"
+                >
+                  Ai uitat parola?
+                </button>
+              </div>
+            )}
+
             {isSignUp && (
               <PasswordInput
                 field={confirmPasswordField}
@@ -386,17 +491,20 @@ export function AuthForm() {
               )}
             </button>
           </form>
+            )}
 
           <div className="mt-6 text-center">
-            <button
-              type="button"
-              onClick={toggleMode}
-              className="text-sm text-stone-500 hover:text-stone-700 transition-colors"
-            >
-              {isSignUp
-                ? <><span className="underline decoration-dotted">Ai deja cont?</span> Conectează-te</>
-                : <><span className="underline decoration-dotted">Nu ai cont?</span> Creează unul</>}
-            </button>
+            {!showForgotPassword && (
+              <button
+                type="button"
+                onClick={toggleMode}
+                className="text-sm text-stone-500 hover:text-stone-700 transition-colors"
+              >
+                {isSignUp
+                  ? <><span className="underline decoration-dotted">Ai deja cont?</span> Conectează-te</>
+                  : <><span className="underline decoration-dotted">Nu ai cont?</span> Creează unul</>}
+              </button>
+            )}
           </div>
         </motion.div>
       </div>

@@ -14,7 +14,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  const isPublicRoute = pathname === '/login' || pathname.startsWith('/auth/') || pathname === '/cont-confirmat'
+  // Skip middleware for password reset page
+  if (pathname === '/resetare-parola') {
+    return NextResponse.next()
+  }
+
+  const isPublicRoute = pathname === '/login' || pathname.startsWith('/auth/') || pathname === '/cont-confirmat' || pathname === '/resetare-parola'
   const isPublicFile = pathname.match(/\.(ico|png|jpg|svg|json|webmanifest)$/)
 
   const supabaseResponse = NextResponse.next()
