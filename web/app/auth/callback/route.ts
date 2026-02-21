@@ -3,10 +3,15 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
+  const fullUrl = request.url
+  console.log('[auth/callback] FULL URL:', fullUrl)
+  
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const tokenHash = searchParams.get('token_hash')
   const type = searchParams.get('type')
+  
+  console.log('[auth/callback] PARAMS:', { code, tokenHash: tokenHash?.substring(0, 10), type })
 
   const cookieStore = await cookies()
   const supabase = createServerClient(
