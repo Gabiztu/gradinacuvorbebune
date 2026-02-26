@@ -55,9 +55,7 @@ function DesktopSidebar() {
     <aside className="hidden md:flex w-64 flex-col justify-between p-6 z-10 glass-panel border-r border-white/40 h-screen fixed left-0 top-0">
       <div>
         <div className="mb-10 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-300 to-rose-300 flex items-center justify-center text-white shadow-sm">
-            <iconify-icon icon="solar:heart-angle-linear" width="18" />
-          </div>
+          <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
           <h1 className="flex flex-col text-[15px] font-bold tracking-tighter text-stone-800 uppercase">
             <span className="leading-none">Gradina cu</span>
             <span className="leading-none -mt-[3px]">Vorbe Bune</span>
@@ -197,9 +195,7 @@ function MobileHeader() {
   return (
     <div className="md:hidden flex items-center justify-between mb-0 sticky top-0 bg-white/0 backdrop-blur-sm z-50 py-4 px-1">
         <div className="flex items-center gap-2 ml-5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-300 to-rose-300 flex items-center justify-center text-white">
-            <iconify-icon icon="solar:heart-angle-linear" width="18" />
-          </div>
+          <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
           <h1 className="flex flex-col text-[15px] font-bold tracking-tighter text-stone-800 uppercase">
             <span className="leading-none">Grădina cu</span>
             <span className="leading-none -mt-[3px]">Vorbe Bune</span>
@@ -217,7 +213,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   
   // Skip layout for standalone pages
-  if (pathname === '/cont-confirmat' || pathname === '/resetare-parola') {
+  if (pathname === '/cont-confirmat' || pathname === '/resetare-parola' || pathname === '/acasa') {
     return <>{children}</>
   }
   

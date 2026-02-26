@@ -120,6 +120,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           } else {
             setUser(null)
             setProfile(null)
+            // Redirect to login when signed out (works across all tabs) - but only if not on a public page
+            if (typeof window !== 'undefined') {
+              const publicPaths = ['/login', '/acasa', '/cont-confirmat', '/resetare-parola']
+              const isPublicPath = publicPaths.includes(window.location.pathname)
+              if (!isPublicPath) {
+                window.location.href = '/login'
+              }
+            }
           }
         } catch (err) {
           if (err instanceof Error && err.name === 'AbortError') return

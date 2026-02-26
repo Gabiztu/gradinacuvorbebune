@@ -9,11 +9,11 @@ import type { Session } from '@supabase/supabase-js'
 import { PasswordInput } from './PasswordInput'
 import { useTransientPassword } from '@/hooks/useTransientPassword'
 
-export function AuthForm() {
+export function AuthForm({ initialMode = 'login' }: { initialMode?: 'login' | 'signup' }) {
   const router = useRouter()
   const supabase = createClient()
   
-  const [isSignUp, setIsSignUp] = useState(false)
+  const [isSignUp, setIsSignUp] = useState(initialMode === 'signup')
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<'parent' | 'teacher'>('parent')
   const [loading, setLoading] = useState(false)
@@ -249,9 +249,7 @@ export function AuthForm() {
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
         <div className="mb-6">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-300 to-rose-300 flex items-center justify-center shadow-lg">
-            <Heart className="w-8 h-8 text-white" fill="currentColor" />
-          </div>
+          <img src="/logo.png" alt="Logo" className="w-16 h-16 rounded-2xl shadow-lg object-contain" />
         </div>
 
         <h1 className="flex flex-col text-2xl font-bold tracking-tighter text-stone-800 uppercase mb-2">
@@ -286,9 +284,23 @@ export function AuthForm() {
                 )}
 
                 {resetEmailSent ? (
-                  <div className="p-3 bg-green-50/80 backdrop-blur-lg border border-green-200/50 rounded-xl text-green-700 text-sm">
-                    <CheckCircle className="w-5 h-5 inline-block mr-2" />
-                    Am trimis un email cu instrucțiuni pentru resetarea parolei. Verifică inbox-ul (și Spam).
+                  <div className="space-y-3">
+                    <div className="p-3 bg-green-50/80 backdrop-blur-lg border border-green-200/50 rounded-xl text-green-700 text-sm">
+                      <CheckCircle className="w-5 h-5 inline-block mr-2" />
+                      Am trimis un email cu instrucțiuni pentru resetarea parolei. Verifică inbox-ul (și Spam).
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowForgotPassword(false)
+                        setResetEmailSent(false)
+                        setError(null)
+                        setEmail('')
+                      }}
+                      className="w-full py-2 text-sm text-stone-500 hover:text-stone-700 transition-colors"
+                    >
+                      Înapoi la login
+                    </button>
                   </div>
                 ) : (
                   <>

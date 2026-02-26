@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Plus_Jakarta_Sans, Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { Toaster } from '@/components/ui/Toaster'
 import { AuthProvider } from '@/contexts/AuthContext'
@@ -17,13 +17,25 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   variable: '--font-plus-jakarta',
 })
 
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-playfair',
+})
+
 export const metadata: Metadata = {
   title: "Grădina cu Vorbe Bune",
   description: "Cultivă empatia prin cuvinte",
   manifest: '/manifest.json',
   icons: {
-    icon: '/icon.svg',
-    apple: '/icon.svg',
+    icon: '/tabicon-rounded.png',
+    apple: '/tabicon-rounded.png',
   },
   appleWebApp: {
     capable: true,
@@ -97,7 +109,7 @@ export default function RootLayout({
         />
         <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" async></script>
       </head>
-      <body className={`${plusJakartaSans.variable} font-sans antialiased`} suppressHydrationWarning>
+      <body className={`${plusJakartaSans.variable} ${inter.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning>
         <AmbientBackground />
         <ErrorBoundary>
             <AuthProvider>
