@@ -22,7 +22,7 @@ export default function ScrollShrinkWrapper({ children }: ScrollShrinkWrapperPro
   }, [])
   
   const targetWidth = useMemo(() => {
-    return isMobile ? 90 : 84
+    return isMobile ? 94 : 84
   }, [isMobile])
   
   const widthRaw = useTransform(scrollYProgress, [0, 1], [100, targetWidth])
