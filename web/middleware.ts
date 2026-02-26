@@ -19,7 +19,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  const isPublicRoute = pathname === '/login' || pathname.startsWith('/auth/') || pathname === '/cont-confirmat' || pathname === '/resetare-parola'
+  // Skip middleware for landing page
+  if (pathname === '/acasa') {
+    return NextResponse.next()
+  }
+
+  const isPublicRoute = pathname === '/login' || pathname.startsWith('/auth/') || pathname === '/cont-confirmat' || pathname === '/resetare-parola' || pathname === '/acasa'
   const isPublicFile = pathname.match(/\.(ico|png|jpg|svg|json|webmanifest)$/)
 
   const supabaseResponse = NextResponse.next()
@@ -72,7 +77,7 @@ export async function middleware(request: NextRequest) {
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://vercel.live https://*.vercel.live https://code.iconify.design",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vercel.live https://*.vercel.live wss://*.vercel.live wss://*.pusher.com https://*.pusher.com https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com",
-    "img-src 'self' blob: data: https://*.supabase.co https://vercel.com https://vercel.live",
+    "img-src 'self' blob: data: https://*.supabase.co https://vercel.com https://vercel.live https://images.unsplash.com",
     "font-src 'self' data: https://fonts.gstatic.com",
     "frame-src 'self' https://vercel.live https://*.vercel.live",
     "object-src 'none'",
