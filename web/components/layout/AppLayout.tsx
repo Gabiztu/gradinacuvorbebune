@@ -213,7 +213,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   
   // Skip layout for standalone pages
-  if (pathname === '/cont-confirmat' || pathname === '/resetare-parola' || pathname === '/acasa') {
+  if (pathname === '/' || pathname === '/cont-confirmat' || pathname === '/resetare-parola') {
     return <>{children}</>
   }
   

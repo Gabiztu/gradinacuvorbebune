@@ -19,12 +19,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Skip middleware for landing page
-  if (pathname === '/acasa') {
-    return NextResponse.next()
-  }
-
-  const isPublicRoute = pathname === '/login' || pathname.startsWith('/auth/') || pathname === '/cont-confirmat' || pathname === '/resetare-parola' || pathname === '/acasa'
+  // Define public routes - / is now the landing page (public)
+  const isPublicRoute = pathname === '/' || pathname === '/login' || pathname.startsWith('/auth/') || pathname === '/cont-confirmat' || pathname === '/resetare-parola'
   const isPublicFile = pathname.match(/\.(ico|png|jpg|svg|json|webmanifest)$/)
 
   const supabaseResponse = NextResponse.next()
@@ -54,7 +50,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (session && pathname === '/login') {
-    return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.redirect(new URL('/acasa', request.url))
   }
 
   // 3. Admin Protection
@@ -68,7 +64,7 @@ export async function middleware(request: NextRequest) {
       .single()
 
     const isAdmin = profile?.role === 'admin' || profile?.is_admin === true
-    if (!isAdmin) return NextResponse.redirect(new URL('/', request.url))
+    if (!isAdmin) return NextResponse.redirect(new URL('/acasa', request.url))
   }
 
   // 4. Content Security Policy - CLEAN VERSION

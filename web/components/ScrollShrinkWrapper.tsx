@@ -22,7 +22,7 @@ export default function ScrollShrinkWrapper({ children }: ScrollShrinkWrapperPro
   }, [])
   
   const targetWidth = useMemo(() => {
-    return isMobile ? 95 : 84
+    return isMobile ? 99 : 84
   }, [isMobile])
   
   const widthRaw = useTransform(scrollYProgress, [0, 1], [100, targetWidth])
@@ -36,7 +36,7 @@ export default function ScrollShrinkWrapper({ children }: ScrollShrinkWrapperPro
       
       {/* Animated Background Layer (z-0) */}
       <motion.div 
-        className="absolute  top-0 bottom-0 left-0 right-0 mx-auto bg-[#FAFAF9] z-0"
+        className="absolute top-0 bottom-0 left-0 right-0 mx-auto bg-[#FAFAF9] z-0"
         style={{ 
           width: widthWithUnit,
           borderBottomLeftRadius: radiusLeft,
@@ -45,10 +45,10 @@ export default function ScrollShrinkWrapper({ children }: ScrollShrinkWrapperPro
       />
       
       {/* Content Layer (z-10) - CRITICAL: Must be relative and z-10 */}
-      <div className="relative  z-10 w-full">
+      <div className="relative z-10 w-full">
         {children}
       </div>
       
     </section>
-  );
+  )
 }

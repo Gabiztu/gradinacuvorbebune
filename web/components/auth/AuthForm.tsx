@@ -35,7 +35,7 @@ export function AuthForm({ initialMode = 'login' }: { initialMode?: 'login' | 's
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        router.push('/')
+        router.push('/acasa')
       }
     }
     checkAuth()
@@ -44,7 +44,7 @@ export function AuthForm({ initialMode = 'login' }: { initialMode?: 'login' | 's
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string, session: Session | null) => {
       if (event === 'SIGNED_IN' && session) {
-        router.push('/')
+        router.push('/acasa')
       }
     })
     return () => subscription.unsubscribe()
@@ -165,7 +165,7 @@ export function AuthForm({ initialMode = 'login' }: { initialMode?: 'login' | 's
           return
         }
         setLoading(false)
-        router.push('/')
+        router.push('/acasa')
       }
     } catch {
       setError('A apărut o eroare. Încearcă din nou.')
