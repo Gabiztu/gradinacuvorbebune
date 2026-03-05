@@ -10,14 +10,14 @@ import { cn } from '@/lib/utils'
 import { ReactNode, useEffect } from 'react'
 
 const navItems = [
-  { href: '/', label: 'Acasă', icon: 'solar:home-smile-linear', key: 'home' },
+  { href: '/acasa', label: 'Acasă', icon: 'solar:home-smile-linear', key: 'home' },
   { href: '/biblioteca', label: 'Biblioteca', icon: 'solar:book-bookmark-linear', key: 'biblioteca' },
   { href: '/gradina', label: 'Grădina', icon: 'solar:leaf-linear', key: 'gradina' },
   { href: '/beneficiari', label: 'Beneficiari', icon: 'solar:users-group-rounded-linear', key: 'beneficiari' },
 ]
 
 const mobileNavItems = [
-  { href: '/', label: 'Acasă', icon: 'solar:home-smile-linear', key: 'home' },
+  { href: '/acasa', label: 'Acasă', icon: 'solar:home-smile-linear', key: 'home' },
   { href: '/biblioteca', label: 'Bibliotecă', icon: 'solar:book-bookmark-linear', key: 'biblioteca' },
   { href: '/gradina', label: '', icon: 'solar:leaf-linear', key: 'garden', center: true },
   { href: '/beneficiari', label: 'Copii', icon: 'solar:users-group-rounded-linear', key: 'beneficiari' },
@@ -25,7 +25,7 @@ const mobileNavItems = [
 ]
 
 function getPageKey(pathname: string): string {
-  if (pathname === '/') return 'home'
+  if (pathname === '/' || pathname === '/acasa') return 'home'
   if (pathname.startsWith('/biblioteca')) return 'biblioteca'
   if (pathname.startsWith('/message/personalize')) return 'biblioteca'
   if (pathname.startsWith('/gradina')) return 'gradina'
@@ -55,7 +55,7 @@ function DesktopSidebar() {
     <aside className="hidden md:flex w-64 flex-col justify-between p-6 z-10 glass-panel border-r border-white/40 h-screen fixed left-0 top-0">
       <div>
         <div className="mb-10 flex items-center gap-3">
-          <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
+          <img src="/logonou1.png" alt="Logo" className="h-8 w-auto" />
           <h1 className="flex flex-col text-[15px] font-bold tracking-tighter text-stone-800 uppercase">
             <span className="leading-none">Gradina cu</span>
             <span className="leading-none -mt-[3px]">Vorbe Bune</span>
@@ -195,7 +195,7 @@ function MobileHeader() {
   return (
     <div className="md:hidden flex items-center justify-between mb-0 sticky top-0 bg-white/0 backdrop-blur-sm z-50 py-4 px-1">
         <div className="flex items-center gap-2 ml-5">
-          <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
+          <img src="/logonou1.png" alt="Logo" className="h-8 w-auto" />
           <h1 className="flex flex-col text-[15px] font-bold tracking-tighter text-stone-800 uppercase">
             <span className="leading-none">Grădina cu</span>
             <span className="leading-none -mt-[3px]">Vorbe Bune</span>

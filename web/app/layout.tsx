@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   description: "Cultivă empatia prin cuvinte",
   manifest: '/manifest.json',
   icons: {
-    icon: '/tabicon-rounded.png',
-    apple: '/tabicon-rounded.png',
+    icon: '/logotab.jpeg',
+    apple: '/logotab.jpeg',
   },
   appleWebApp: {
     capable: true,
@@ -59,6 +59,8 @@ export default function RootLayout({
   return (
     <html lang="ro" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/tabicon-rounded.png" />
+        <link rel="apple-touch-icon" href="/tabicon-rounded.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import ScrollShrinkWrapper from '@/components/animations/ScrollShrinkWrapper'
@@ -11,11 +11,26 @@ export default function AcasaPage() {
   const [mounted, setMounted] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
   const [countersAnimated, setCountersAnimated] = useState(false)
+  const [animationStarted, setAnimationStarted] = useState(false)
   const [counterValues, setCounterValues] = useState({ messages: 0, plants: 0, situations: 0, days: 0 })
   const statsRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useCallback((node: HTMLDivElement | null) => {
+    if (node !== null) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setAnimationStarted(true)
+            observer.disconnect()
+          }
+        },
+        { threshold: 0.1 }
+      )
+      observer.observe(node)
+    }
+  }, [])
   const totalSteps = 3
   
-  const targets = { messages: 18542, plants: 3120, situations: 12, days: 247 }
+  const targets = { messages: 1544, plants: 310, situations: 12, days: 97 }
   
   useEffect(() => {
     setMounted(true)
@@ -30,13 +45,16 @@ export default function AcasaPage() {
   useEffect(() => {
     if (!mounted || countersAnimated) return
     
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+    const threshold = isMobile ? 0.3 : 0.5
+    
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
           setCountersAnimated(true)
         }
       },
-      { threshold: 0.5 }
+      { threshold }
     )
     
     if (statsRef.current) {
@@ -75,14 +93,14 @@ export default function AcasaPage() {
   }, [countersAnimated])
 
   useEffect(() => {
-    if (!mounted) return
+    if (!mounted || !animationStarted) return
     
     const interval = setInterval(() => {
       setCurrentStep(prev => prev < totalSteps ? prev + 1 : 1)
     }, 10000)
     
     return () => clearInterval(interval)
-  }, [mounted, currentStep])
+  }, [mounted, animationStarted, currentStep])
 
   const goToStep = (stepIndex: number) => {
     setCurrentStep(stepIndex)
@@ -101,7 +119,7 @@ export default function AcasaPage() {
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Logo" className="h-10 w-auto" />
+            <img src="/logonou1.png" alt="Logo" className="h-10 w-auto" />
             <span className="text-[15px] font-bold tracking-tighter text-stone-800 flex flex-col uppercase leading-none">
               <span>Grădina cu</span>
               <span className="-mt-[2px]">Vorbe Bune</span>
@@ -250,7 +268,7 @@ export default function AcasaPage() {
       </section>
 
       {/* ================= 3. HOW IT WORKS ================= */}
-      <section className="overflow-hidden bg-[#FAFAF9] pt-24 pb-20 border-t border-stone-100" id="cum-functioneaza">
+      <section ref={sectionRef} className="overflow-hidden bg-[#FAFAF9] pt-24 pb-20 border-t border-stone-100" id="cum-functioneaza">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col lg:flex-row gap-16 items-center relative">
             <div className="flex-1 w-full">
@@ -274,7 +292,7 @@ export default function AcasaPage() {
                     <motion.div 
                       className="absolute top-0 left-0 h-full bg-emerald-500"
                       initial={{ width: "0%" }}
-                      animate={{ width: currentStep === 1 ? "100%" : "0%" }}
+                      animate={{ width: (animationStarted && currentStep === 1) ? "100%" : "0%" }}
                       transition={{ duration: currentStep === 1 ? 10 : 0, ease: "linear" }}
                     />
                   </div>
@@ -292,7 +310,7 @@ export default function AcasaPage() {
                     <motion.div 
                       className="absolute top-0 left-0 h-full bg-emerald-500"
                       initial={{ width: "0%" }}
-                      animate={{ width: currentStep === 2 ? "100%" : "0%" }}
+                      animate={{ width: (animationStarted && currentStep === 2) ? "100%" : "0%" }}
                       transition={{ duration: currentStep === 2 ? 10 : 0, ease: "linear" }}
                     />
                   </div>
@@ -310,7 +328,7 @@ export default function AcasaPage() {
                     <motion.div 
                       className="absolute top-0 left-0 h-full bg-emerald-500"
                       initial={{ width: "0%" }}
-                      animate={{ width: currentStep === 3 ? "100%" : "0%" }}
+                      animate={{ width: (animationStarted && currentStep === 3) ? "100%" : "0%" }}
                       transition={{ duration: currentStep === 3 ? 10 : 0, ease: "linear" }}
                     />
                   </div>
@@ -345,7 +363,7 @@ export default function AcasaPage() {
                         <motion.div 
                           className="absolute top-0 left-0 w-full bg-emerald-500 rounded-full"
                           initial={{ height: "0%" }}
-                          animate={{ height: currentStep === 1 ? "100%" : "0%" }}
+                          animate={{ height: (animationStarted && currentStep === 1) ? "100%" : "0%" }}
                           transition={{ duration: currentStep === 1 ? 10 : 0, ease: "linear" }}
                         />
                       </div>
@@ -367,7 +385,7 @@ export default function AcasaPage() {
                         <motion.div 
                           className="absolute top-0 left-0 w-full bg-emerald-500 rounded-full"
                           initial={{ height: "0%" }}
-                          animate={{ height: currentStep === 2 ? "100%" : "0%" }}
+                          animate={{ height: (animationStarted && currentStep === 2) ? "100%" : "0%" }}
                           transition={{ duration: currentStep === 2 ? 10 : 0, ease: "linear" }}
                         />
                       </div>
@@ -389,7 +407,7 @@ export default function AcasaPage() {
                         <motion.div 
                           className="absolute top-0 left-0 w-full bg-emerald-500 rounded-full"
                           initial={{ height: "0%" }}
-                          animate={{ height: currentStep === 3 ? "100%" : "0%" }}
+                          animate={{ height: (animationStarted && currentStep === 3) ? "100%" : "0%" }}
                           transition={{ duration: currentStep === 3 ? 10 : 0, ease: "linear" }}
                         />
                       </div>
@@ -681,7 +699,7 @@ export default function AcasaPage() {
       <footer className="bg-stone-900 text-stone-400 py-12 border-t border-stone-800">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2 text-stone-200">
-            <img src="/tabicon-rounded.png" alt="Logo" className="h-6 w-auto" />
+            <img src="/logonou1.png" alt="Logo" className="h-12 w-auto" />
             <span className="font-bold tracking-tight">Grădina cu Vorbe Bune</span>
           </div>
           <div className="text-sm font-medium">
