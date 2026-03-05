@@ -108,6 +108,6 @@ export const config = {
      * - Static files
      * - API routes
      */
-    '/((?!_next/static|_next/image|_next/data|favicon.ico|icon\\.svg|icon-.*\\.png|images/|api/).*)',
+    '/((?!_next/static|_next/image|_next/data|favicon.ico|logotab.jpeg|tabicon-rounded.png|logonou1.png|icon\\.svg|icon-.*\\.png|images/|api/|manifest\\.json|apple-touch-icon\\.png).*)',
   ],
 }

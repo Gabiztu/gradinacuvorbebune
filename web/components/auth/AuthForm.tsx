@@ -249,7 +249,7 @@ export function AuthForm({ initialMode = 'login' }: { initialMode?: 'login' | 's
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
         <div className="mb-6">
-          <img src="/logo.png" alt="Logo" className="w-16 h-16 rounded-2xl shadow-lg object-contain" />
+          <img src="/logonou1.png" alt="Logo" className="w-16 h-16 rounded-2xl shadow-lg object-contain" />
         </div>
 
         <h1 className="flex flex-col text-2xl font-bold tracking-tighter text-stone-800 uppercase mb-2">
