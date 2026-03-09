@@ -91,19 +91,24 @@ export default function BlogPostClient({ post, contentHtml, tocItems }: {
 
     // Smooth scroll with offset for sticky header
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
+      anchor.addEventListener('click', (e: Event) => {
         e.preventDefault()
-        const targetId = this.getAttribute('href').substring(1)
-        const target = document.getElementById(targetId)
-        if (target) {
-          const headerOffset = 100
-          const elementPosition = target.getBoundingClientRect().top
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset
-          
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          })
+        const currentTarget = e.currentTarget as HTMLAnchorElement
+        const href = currentTarget.getAttribute('href')
+        
+        if (href) {
+          const targetId = href.substring(1)
+          const target = document.getElementById(targetId)
+          if (target) {
+            const headerOffset = 100
+            const elementPosition = target.getBoundingClientRect().top
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+            
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            })
+          }
         }
       })
     })
