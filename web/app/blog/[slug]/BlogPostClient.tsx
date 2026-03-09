@@ -20,6 +20,7 @@ type TocItem = {
   id: string
   text: string
   level: string
+  children?: TocItem[]
 }
 
 function formatDate(date: string): string {
@@ -235,7 +236,7 @@ export default function BlogPostClient({ post, contentHtml, tocItems }: {
                   >
                     {item.text}
                   </a>
-                  {item.children && item.children.length > 0 && item.level === 2 && (
+                  {item.children && item.children.length > 0 && item.level === "2" && (
                     <ul className="mt-2 ml-4 border-l border-stone-200 space-y-2">
                       {item.children.map((child) => (
                         <li key={child.id}>
@@ -291,7 +292,7 @@ export default function BlogPostClient({ post, contentHtml, tocItems }: {
                       {item.text}
                     </a>
                     {/* Nested H3 children - hidden until parent H2 is active */}
-                    {item.children && item.children.length > 0 && item.level === 2 && (
+                  {item.children && item.children.length > 0 && item.level === "2" && (
                       <ul className="toc-children hidden mt-2 ml-4 border-l border-stone-200 space-y-2" data-parent-id={item.id}>
                         {item.children.map((child) => (
                           <li key={child.id}>

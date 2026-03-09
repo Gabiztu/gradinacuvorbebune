@@ -132,8 +132,8 @@ export default function BlogManagementPage() {
       const allPosts = data || []
       setStats({
         total: allPosts.length,
-        published: allPosts.filter(p => p.is_published).length,
-        drafts: allPosts.filter(p => !p.is_published).length
+        published: allPosts.filter((p: BlogPost) => p.is_published).length,
+        drafts: allPosts.filter((p: BlogPost) => !p.is_published).length
       })
     } catch (error) {
       console.error('Error fetching posts:', error)

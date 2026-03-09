@@ -110,7 +110,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   interface TocItemType {
     id: string
     text: string
-    level: number
+    level: string
     children?: TocItemType[]
   }
 
@@ -132,7 +132,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     tocItems.push({
       id: idMatch?.[1] || '',
       text: plainText,
-      level: 2,
+      level: "2",
       children: []
     })
   })
@@ -154,20 +154,20 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       }
     }
     
-    if (parentH2Index >= 0) {
+    if (parentH2Index >= 0 && tocItems[parentH2Index]) {
       // Add to parent H2
       tocItems[parentH2Index].children = tocItems[parentH2Index].children || []
-      tocItems[parentH2Index].children.push({
+      tocItems[parentH2Index].children!.push({
         id: idMatch?.[1] || '',
         text: plainText,
-        level: 3
+        level: "3"
       })
     } else {
       // No parent H2 found, add at top level in order
       tocItems.push({
         id: idMatch?.[1] || '',
         text: plainText,
-        level: 3
+        level: "3"
       })
     }
   })
