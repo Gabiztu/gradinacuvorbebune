@@ -122,8 +122,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setProfile(null)
             // Redirect to login when signed out (works across all tabs) - but only if not on a public page
             if (typeof window !== 'undefined') {
-              const publicPaths = ['/', '/login', '/acasa', '/cont-confirmat', '/resetare-parola']
-              const isPublicPath = publicPaths.includes(window.location.pathname)
+              const publicPaths = ['/', '/login', '/acasa', '/cont-confirmat', '/resetare-parola', '/blog']
+              const isPublicPath = publicPaths.includes(window.location.pathname) || window.location.pathname.startsWith('/blog/')
               if (!isPublicPath) {
                 window.location.href = '/login'
               }

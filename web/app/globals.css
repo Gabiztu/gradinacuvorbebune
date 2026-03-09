@@ -98,6 +98,99 @@
   }
 }
 
+/* Blog Article Styles */
+@layer components {
+  .article-content p {
+    @apply mb-8;
+  }
+  
+  .article-content h2 {
+    font-family: 'Playfair Display', serif;
+    @apply text-3xl md:text-4xl font-bold text-stone-900 mt-16 mb-6 leading-tight;
+    scroll-margin-top: 100px;
+  }
+  
+  .article-content h3 {
+    font-family: 'Playfair Display', serif;
+    @apply text-2xl md:text-3xl font-semibold text-stone-900 mt-12 mb-4 leading-tight;
+    scroll-margin-top: 100px;
+  }
+  
+  .article-content blockquote {
+    @apply my-12 pl-8 border-l-4 border-emerald-500 py-2 bg-emerald-50/50 rounded-r-2xl pr-4;
+  }
+  
+  .article-content blockquote p {
+    @apply text-2xl md:text-3xl font-serif text-stone-900 italic leading-snug mb-0;
+  }
+  
+  .article-content ul, .article-content ol {
+    @apply mb-8 pl-6;
+  }
+  
+  .article-content li {
+    @apply mb-2;
+  }
+  
+  .article-content ul li {
+    @apply list-disc;
+  }
+  
+  .article-content ol li {
+    @apply list-decimal;
+  }
+  
+  .article-content a {
+    @apply text-emerald-600 underline underline-offset-2 hover:text-emerald-700;
+  }
+  
+  .article-content strong {
+    @apply font-semibold text-stone-800;
+  }
+  
+  .article-content em {
+    @apply italic;
+  }
+  
+  .article-content code {
+    @apply bg-stone-100 px-1.5 py-0.5 rounded text-sm font-mono text-stone-700;
+  }
+  
+  .article-content pre {
+    @apply bg-stone-900 text-stone-100 p-6 rounded-2xl overflow-x-auto mb-8;
+  }
+  
+  .article-content pre code {
+    @apply bg-transparent p-0 text-stone-100;
+  }
+  
+  .article-content img {
+    @apply w-full rounded-2xl my-8;
+  }
+  
+  /* Drop Cap for first paragraph */
+  .article-content > p:first-of-type::first-letter {
+    float: left;
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    line-height: 0.8;
+    padding-right: 0.75rem;
+    padding-bottom: 0.1rem;
+    color: #047857;
+  }
+
+  /* ToC Active Link Style - Desktop Only */
+  @media (min-width: 1024px) {
+    .toc-link {
+      @apply border-l-2 border-transparent transition-all duration-300;
+    }
+    
+    .toc-link.active {
+      @apply text-emerald-700 border-emerald-500 font-semibold;
+    }
+  }
+}
+
 /* Custom shadow utilities */
 @layer utilities {
   .shadow-soft {

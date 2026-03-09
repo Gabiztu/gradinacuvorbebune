@@ -14,6 +14,12 @@ const navItems = [
   { href: '/biblioteca', label: 'Biblioteca', icon: 'solar:book-bookmark-linear', key: 'biblioteca' },
   { href: '/gradina', label: 'Grădina', icon: 'solar:leaf-linear', key: 'gradina' },
   { href: '/beneficiari', label: 'Beneficiari', icon: 'solar:users-group-rounded-linear', key: 'beneficiari' },
+  { href: '/blog', label: 'Blog', icon: 'solar:document-text-linear', key: 'blog' },
+]
+
+const adminNavItems = [
+  { href: '/mgmt-x9f2b8c71', label: 'Dashboard', icon: 'solar:chart-linear', key: 'admin' },
+  { href: '/mgmt-x9f2b8c71/blog', label: 'Articole Blog', icon: 'solar:pencil-linear', key: 'blog-admin' },
 ]
 
 const mobileNavItems = [
@@ -30,6 +36,7 @@ function getPageKey(pathname: string): string {
   if (pathname.startsWith('/message/personalize')) return 'biblioteca'
   if (pathname.startsWith('/gradina')) return 'gradina'
   if (pathname.startsWith('/beneficiari')) return 'beneficiari'
+  if (pathname.startsWith('/blog')) return 'blog'
   if (pathname.startsWith('/profil') || pathname.startsWith('/mgmt')) return 'profil'
   if (pathname.startsWith('/mesaj')) return 'mesaj'
   return 'home'
@@ -81,6 +88,34 @@ function DesktopSidebar() {
               </Link>
             )
           })}
+          
+          {profile?.is_admin && (
+            <>
+              <div className="pt-4 pb-2">
+                <span className="px-4 text-xs font-semibold text-stone-400 uppercase tracking-wider">
+                  Admin
+                </span>
+              </div>
+              {adminNavItems.map((item) => {
+                const isActive = pathname.startsWith(item.href)
+                return (
+                  <Link
+                    key={item.key}
+                    href={item.href}
+                    className={cn(
+                      'w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all nav-item rounded-xl',
+                      isActive
+                        ? 'bg-white/60 shadow-sm border border-white/50 text-stone-800'
+                        : 'text-stone-500 hover:text-stone-800 hover:bg-white/40 font-normal'
+                    )}
+                  >
+                    <iconify-icon icon={item.icon} width="20" strokeWidth="1.5" />
+                    {item.label}
+                  </Link>
+                )
+              })}
+            </>
+          )}
         </nav>
       </div>
 
@@ -187,6 +222,7 @@ function MobileHeader() {
     biblioteca: 'Biblioteca',
     gradina: 'Grădina',
     beneficiari: 'Beneficiari',
+    blog: 'Blog',
     profil: 'Profil',
   }
 
@@ -212,21 +248,23 @@ function MobileHeader() {
 export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   
-  // Skip layout for standalone pages
-  if (pathname === '/' || pathname === '/cont-confirmat' || pathname === '/resetare-parola') {
-    return <>{children}</>
-  }
-  
+  // IMPORTANT: Always call hooks unconditionally - BEFORE any early returns
   const { loading, user } = useAuth()
   const { isModalOpen } = useModalOverlay()
-
+  
+  // This useEffect must be called unconditionally
   useEffect(() => {
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
     }
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [pathname])
-
+  
+  // Skip layout for standalone pages - AFTER all hooks
+  if (pathname === '/' || pathname.startsWith('/blog') || pathname === '/cont-confirmat' || pathname === '/resetare-parola') {
+    return <>{children}</>
+  }
+  
   const isPublicPage = pathname === '/login' || pathname.startsWith('/auth/')
   
   // Don't show nav if:

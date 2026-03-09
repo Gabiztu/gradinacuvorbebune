@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import ScrollShrinkWrapper from '@/components/animations/ScrollShrinkWrapper'
 import IOSNotification from '@/components/IOSNotification'
 
@@ -106,6 +106,19 @@ export default function AcasaPage() {
     setCurrentStep(stepIndex)
   }
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [mobileMenuOpen])
+
   if (!mounted) return null
 
   return (
@@ -125,8 +138,11 @@ export default function AcasaPage() {
               <span className="-mt-[2px]">Vorbe Bune</span>
             </span>
           </div>
-          <div className="flex items-center gap-6">
-            <Link href="/login" className="hidden md:block text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">
+          <div className="hidden md:flex items-center gap-6">
+            <Link href="/blog" className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">
+              Blog
+            </Link>
+            <Link href="/login" className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">
               Login
             </Link>
             <Link 
@@ -136,8 +152,67 @@ export default function AcasaPage() {
               Începe Acum
             </Link>
           </div>
+
+          {/* Mobile Hamburger Button */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 -mr-2"
+            aria-label="Meniu"
+          >
+            <svg 
+              className="w-6 h-6 text-emerald-600" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Menu - Appears directly under header with opacity effect */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="fixed left-0 right-0 z-[109] md:hidden pt-[64px]"
+          >
+            <div className="bg-white border-t border-stone-100">
+              <div className="flex flex-col p-6 gap-4">
+                <Link 
+                  href="/blog" 
+                  className="text-lg font-medium text-stone-800 py-3 border-b border-stone-100"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Blog
+                </Link>
+                <Link 
+                  href="/login" 
+                  className="text-lg font-medium text-stone-800 py-3 border-b border-stone-100"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link 
+                  href="/login?mode=signup" 
+                  className="bg-emerald-500 text-white px-6 py-3 rounded-full text-center font-medium mt-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Începe Acum
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ================= 1. HERO SECTION ================= */}
       <section className="relative min-h-screen flex items-center pt-20 md:pt-3 pb-12 px-6 overflow-hidden">
@@ -162,12 +237,12 @@ export default function AcasaPage() {
           {/* Text content - First on mobile, left on desktop */}
           <div id="hero-text" className="flex flex-col items-start text-left z-20 order-1 lg:order-1">
             <motion.div
-              initial={{ x: '-100%', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
               className="w-full"
               >
-              <h1 className="text-[40px] md:text-[80px] font-semibold text-stone-900 mb-4 md:mb-6 leading-[1.1] font-serif">
+              <h1 className="text-[40px] md:text-[80px] font-bold text-stone-900 mb-4 md:mb-6 leading-[1.1] font-serif">
                 Cuvintele potrivite cresc <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500 italic pr-2">încrederea</span> copiilor.
               </h1>
 
@@ -177,27 +252,72 @@ export default function AcasaPage() {
             </motion.div>
           </div>
 
-          {/* Image - Second on mobile, right on desktop */}
-          <div className="relative h-[300px] md:h-[500px] w-full flex items-center justify-center mt-2 order-2 lg:order-2">
-            <div className="relative h-full w-auto max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white z-10">
-              <div className="relative h-full w-auto">
-                <img 
-                  src="/images/familie.jpeg" 
-                  alt="Familie" 
-                  className="h-full w-auto max-w-full object-cover object-center" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/20 to-transparent" />
-                
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[75%] bg-white/20 backdrop-blur-xl border border-white/30 p-4 rounded-xl z-10">
-                  <p className="text-white/80 font-medium text-[10px] mb-1 uppercase tracking-wider">Mesaj trimis</p>
-                  <p className="text-white text-sm font-medium leading-tight italic">"Sunt mândru de efortul tău, indiferent de rezultat."</p>
+          {/* Polaroid Images - Right side */}
+          <div className="relative h-[400px] md:h-[600px] lg:h-[700px] w-full flex items-center justify-center order-2 lg:order-2 -mt-8 md:-mt-20">
+            {/* Left Polaroid */}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="absolute -left-10 md:-left-8 lg:-left-12 top-[15%] md:top-[20%] -translate-y-1/2 z-10"
+            >
+              <motion.div
+                className="bg-white p-3 md:p-4 pb-8 md:pb-10 shadow-2xl rotate-[-6deg]"
+              >
+                <div className="w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
+                  <img src="/images/poza1fete.png" alt="Fată" className="w-full h-full object-cover object-center" />
                 </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Third Polaroid - Below left */}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="absolute -left-20 md:-left-14 lg:-left-20 top-[67%] md:top-[67%] -translate-y-1/2 z-10"
+            >
+              <motion.div
+                className="bg-white p-3 md:p-4 pb-8 md:pb-10 shadow-2xl rotate-[3deg]"
+              >
+                <div className="w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
+                  <img src="/images/poza3.png" alt="Poza 3" className="w-full h-full object-cover object-center" />
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Right Polaroid */}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="absolute -right-0 md:-right-0 lg:-right-[8%] top-[35%] md:top-[40%] -translate-y-1/2 z-10"
+            >
+              <motion.div
+                className="bg-white p-3 md:p-4 pb-8 md:pb-10 shadow-2xl rotate-[3deg]"
+              >
+                <div className="w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
+                  <img src="/images/poza2tata.png" alt="Tată" className="w-full h-full object-cover object-center" />
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Message Overlay - Bottom of right polaroid */}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="absolute top-[85%] md:top-[85%] left-[110%] md:left-[40%] z-30 w-[80%] md:w-[55%] max-w-md"
+            >
+              <div className="bg-stone-900/90 backdrop-blur-xl text-white p-4 md:p-6 rounded-[20px] shadow-2xl border border-stone-700 text-center">
+                <p className="text-white/80 font-medium text-xs mb-1 md:mb-2 uppercase tracking-wider">Mesaj trimis</p>
+                <p className="text-white text-sm md:text-base font-medium leading-tight italic">"Sunt mândru de efortul tău, indiferent de rezultat."</p>
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Button - Third on mobile, inside text on desktop */}
-          <div className="order-3 mt-8 lg:absolute lg:-bottom-12 flex justify-center lg:justify-start">
+          <div className="order-3 mt-4 lg:absolute lg:-bottom-8 flex justify-center lg:justify-start">
             <Link href="/login?mode=signup" className="bg-emerald-600 text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-emerald-700 hover:-translate-y-1 transition-all duration-300">
               Descoperă Biblioteca
             </Link>
@@ -208,9 +328,10 @@ export default function AcasaPage() {
       {/* ================= 2. THE PROBLEM ================= */}
       <section className="pt-16 pb-8 px-6 bg-white relative z-20">
         <div className="max-w-7xl mx-auto">
-          <div className="max-w-3xl mb-10">
+          <div className="max-w-3xl mx-auto text-center mb-10">
             <h2 className="text-4xl md:text-6xl font-semibold text-stone-900 mb-6 leading-tight font-serif">
-              Copiii trec prin mai multe decât spun. Adesea, în tăcere.
+              Copiii trec prin mai multe decât spun.<br />
+              Adesea, <span className="text-emerald-600">în tăcere.</span>
             </h2>
             <p className="text-xl text-stone-500 leading-relaxed">
               Noi te ajutăm să găsești calea de comunicare potrivită, exact atunci când au cea mai mare nevoie.

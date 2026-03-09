@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
-import { X, Plus, Pencil, Trash2, Search, Users, MessageCircle, Copy, Smartphone, Heart } from 'lucide-react'
+import { X, Plus, Pencil, Trash2, Search, Users, MessageCircle, Copy, Smartphone, Heart, FileText } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Message, MessageCategory, ProposedMessage } from '@/types'
 import { cn } from '@/lib/utils'
@@ -940,10 +940,21 @@ export default function AdminPage() {
   return (
     <div className="pb-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-semibold tracking-tighter text-stone-800 mb-2">
-          Admin Dashboard
-        </h1>
-        <p className="text-stone-500">Panou de control și statistici</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tighter text-stone-800 mb-2">
+              Admin Dashboard
+            </h1>
+            <p className="text-stone-500">Panou de control și statistici</p>
+          </div>
+          <button
+            onClick={() => router.push('/mgmt-x9f2b8c71/blog')}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-xl text-sm font-medium hover:bg-emerald-600 transition-colors"
+          >
+            <FileText className="w-4 h-4" />
+            <span className="hidden sm:inline">Blog</span>
+          </button>
+        </div>
       </header>
 
       <AnimatePresence mode="wait">

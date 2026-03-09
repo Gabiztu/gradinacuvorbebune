@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Define public routes - / is now the landing page (public)
-  const isPublicRoute = pathname === '/' || pathname === '/login' || pathname.startsWith('/auth/') || pathname === '/cont-confirmat' || pathname === '/resetare-parola'
+  const isPublicRoute = pathname === '/' || pathname === '/login' || pathname.startsWith('/auth/') || pathname === '/cont-confirmat' || pathname === '/resetare-parola' || pathname.startsWith('/blog')
   const isPublicFile = pathname.match(/\.(ico|png|jpg|svg|json|webmanifest)$/)
 
   const supabaseResponse = NextResponse.next()
