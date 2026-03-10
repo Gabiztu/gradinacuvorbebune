@@ -256,16 +256,17 @@ export default function AcasaPage() {
 
           {/* Polaroid Images - Right side */}
           <div className="relative h-[400px] md:h-[600px] lg:h-[700px] w-full flex items-center justify-center order-2 lg:order-2 -mt-8 md:-mt-20">
-            {/* Left Polaroid */}
-            <div className="absolute left-0 md:-left-8 lg:-left-12 top-[8%] md:top-[20%] -translate-y-1/2 z-10 animate-polaroid-in">
-              <div className="bg-white p-3 md:p-4 pb-8 md:pb-10 shadow-2xl rotate-[-6deg]">
+            {/* Left Polaroid - Static for LCP */}
+            <div className="absolute left-0 md:-left-8 lg:-left-12 top-[32%] md:top-[40%] -translate-y-1/2 z-10">
+              <div className="bg-white p-3 md:p-4 pb-8 md:pb-10 shadow-2xl -rotate-3">
                 <div className="relative w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
                   <Image 
                     src="/images/poza1fete.png" 
                     alt="Fată" 
                     fill 
                     priority
-                    sizes="(max-width: 768px) 50vw, 33vw"
+                    quality={80}
+                    sizes="(max-width: 768px) 70vw, 33vw"
                     className="object-cover object-center"
                   />
                 </div>
@@ -273,14 +274,15 @@ export default function AcasaPage() {
             </div>
 
             {/* Third Polaroid - Below left */}
-            <div className="absolute -left-2 md:-left-14 lg:-left-20 top-[67%] md:top-[67%] -translate-y-1/2 z-20 animate-polaroid-in-2">
+            <div className="absolute -left-2 md:-left-14 lg:-left-20 top-[67%] md:top-[67%] -translate-y-1/2 z-20 animate-polaroid-in-2 opacity-0 translate-y-5">
               <div className="bg-white p-3 md:p-4 pb-8 md:pb-10 shadow-2xl rotate-[3deg]">
                 <div className="relative w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
                   <Image 
                     src="/images/poza3.png" 
                     alt="Poza 3" 
                     fill
-                    sizes="(max-width: 768px) 50vw, 33vw"
+                    quality={80}
+                    sizes="(max-width: 768px) 60vw, 33vw"
                     className="object-cover object-center"
                   />
                 </div>
@@ -288,14 +290,15 @@ export default function AcasaPage() {
             </div>
 
             {/* Right Polaroid */}
-            <div className="absolute right-0 md:-right-0 lg:-right-[8%] top-[35%] md:top-[40%] -translate-y-1/2 z-10 animate-polaroid-in-3">
+            <div className="absolute right-0 md:-right-0 lg:-right-[8%] top-[35%] md:top-[40%] -translate-y-1/2 z-10 animate-polaroid-in-3 opacity-0 translate-y-5">
               <div className="bg-white p-3 md:p-4 pb-8 md:pb-10 shadow-2xl rotate-[3deg]">
                 <div className="relative w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
                   <Image 
                     src="/images/poza2tata.png" 
                     alt="Tată" 
                     fill
-                    sizes="(max-width: 768px) 50vw, 33vw"
+                    quality={80}
+                    sizes="(max-width: 768px) 60vw, 33vw"
                     className="object-cover object-center"
                   />
                 </div>

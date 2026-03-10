@@ -61,9 +61,8 @@ const config: Config = {
         'gradient': 'gradient-shift 8s ease infinite',
         'breathe': 'breathe 8s ease-in-out infinite',
         'glow': 'glow 4s ease-in-out infinite alternate',
-        'polaroid-in': 'polaroid-in 0.6s ease-out forwards',
-        'polaroid-in-2': 'polaroid-in-2 0.6s 0.15s ease-out forwards',
-        'polaroid-in-3': 'polaroid-in-3 0.6s 0.3s ease-out forwards',
+        'polaroid-in-2': 'polaroid-in-2 0.6s 0.2s ease-out forwards',
+        'polaroid-in-3': 'polaroid-in-3 0.6s 0.4s ease-out forwards',
       },
       keyframes: {
         grow: {
@@ -126,16 +125,12 @@ const config: Config = {
           from: { filter: 'drop-shadow(0 0 10px rgba(74, 222, 128, 0.2))' },
           to: { filter: 'drop-shadow(0 0 25px rgba(74, 222, 128, 0.6))' },
         },
-        'polaroid-in': {
-          '0%': { opacity: '0', transform: 'translateY(30px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
         'polaroid-in-2': {
-          '0%': { opacity: '0', transform: 'translateY(30px)' },
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         'polaroid-in-3': {
-          '0%': { opacity: '0', transform: 'translateY(30px)' },
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
