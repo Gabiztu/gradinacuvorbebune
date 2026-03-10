@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Plus_Jakarta_Sans, Inter, Playfair_Display } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 import { Toaster } from '@/components/ui/Toaster'
 import { AuthProvider } from '@/contexts/AuthContext'
@@ -48,7 +49,6 @@ export const viewport: Viewport = {
   themeColor: '#22c55e',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
 }
 
 export default function RootLayout({
@@ -109,7 +109,10 @@ export default function RootLayout({
             `,
           }}
         />
-        <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" async></script>
+        <Script 
+          src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" 
+          strategy="lazyOnload" 
+        />
       </head>
       <body className={`${plusJakartaSans.variable} ${inter.variable} ${playfair.variable} font-sans antialiased`} suppressHydrationWarning>
         <AmbientBackground />

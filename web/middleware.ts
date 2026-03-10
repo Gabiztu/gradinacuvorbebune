@@ -107,7 +107,9 @@ export const config = {
      * - _next/data (page data)
      * - Static files
      * - API routes
+     * - robots.txt
+     * - sitemap.xml
      */
-    '/((?!_next/static|_next/image|_next/data|favicon.ico|logotab.jpeg|tabicon-rounded.png|logonou1.png|icon\\.svg|icon-.*\\.png|images/|api/|manifest\\.json|apple-touch-icon\\.png).*)',
+    '/((?!_next/static|_next/image|_next/data|favicon.ico|logotab.jpeg|tabicon-rounded.png|logonou1.png|icon\\.svg|icon-.*\\.png|images/|api/|manifest\\.json|apple-touch-icon\\.png|robots\\.txt|sitemap\\.xml).*)',
   ],
 }
