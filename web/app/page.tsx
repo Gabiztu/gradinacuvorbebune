@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import ScrollShrinkWrapper from '@/components/animations/ScrollShrinkWrapper'
 import IOSNotification from '@/components/IOSNotification'
@@ -259,13 +260,20 @@ export default function AcasaPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="absolute -left-10 md:-left-8 lg:-left-12 top-[15%] md:top-[20%] -translate-y-1/2 z-10"
+              className="absolute left-0 md:-left-8 lg:-left-12 top-[8%] md:top-[20%] -translate-y-1/2 z-10"
             >
               <motion.div
                 className="bg-white p-3 md:p-4 pb-8 md:pb-10 shadow-2xl rotate-[-6deg]"
               >
-                <div className="w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
-                  <img src="/images/poza1fete.png" alt="Fată" className="w-full h-full object-cover object-center" />
+                <div className="relative w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
+                  <Image 
+                    src="/images/poza1fete.png" 
+                    alt="Fată" 
+                    fill 
+                    priority
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                    className="object-cover object-center"
+                  />
                 </div>
               </motion.div>
             </motion.div>
@@ -275,13 +283,20 @@ export default function AcasaPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="absolute -left-20 md:-left-14 lg:-left-20 top-[67%] md:top-[67%] -translate-y-1/2 z-10"
+              className="absolute -left-2 md:-left-14 lg:-left-20 top-[67%] md:top-[67%] -translate-y-1/2 z-20"
             >
               <motion.div
                 className="bg-white p-3 md:p-4 pb-8 md:pb-10 shadow-2xl rotate-[3deg]"
               >
-                <div className="w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
-                  <img src="/images/poza3.png" alt="Poza 3" className="w-full h-full object-cover object-center" />
+                <div className="relative w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
+                  <Image 
+                    src="/images/poza3.png" 
+                    alt="Poza 3" 
+                    fill 
+                    priority
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                    className="object-cover object-center"
+                  />
                 </div>
               </motion.div>
             </motion.div>
@@ -291,13 +306,20 @@ export default function AcasaPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="absolute -right-0 md:-right-0 lg:-right-[8%] top-[35%] md:top-[40%] -translate-y-1/2 z-10"
+              className="absolute right-0 md:-right-0 lg:-right-[8%] top-[35%] md:top-[40%] -translate-y-1/2 z-10"
             >
               <motion.div
                 className="bg-white p-3 md:p-4 pb-8 md:pb-10 shadow-2xl rotate-[3deg]"
               >
-                <div className="w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
-                  <img src="/images/poza2tata.png" alt="Tată" className="w-full h-full object-cover object-center" />
+                <div className="relative w-56 md:w-80 lg:w-96 aspect-[3/2] overflow-hidden">
+                  <Image 
+                    src="/images/poza2tata.png" 
+                    alt="Tată" 
+                    fill 
+                    priority
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                    className="object-cover object-center"
+                  />
                 </div>
               </motion.div>
             </motion.div>
@@ -307,7 +329,7 @@ export default function AcasaPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="absolute top-[85%] md:top-[85%] left-[110%] md:left-[40%] z-30 w-[80%] md:w-[55%] max-w-md"
+              className="absolute top-[95%] left-7 md:left-[40%] md:top-[85%] z-30 w-[85%] md:w-[55%] max-w-md"
             >
               <div className="bg-stone-900/90 backdrop-blur-xl text-white p-4 md:p-6 rounded-[20px] shadow-2xl border border-stone-700 text-center">
                 <p className="text-white/80 font-medium text-xs mb-1 md:mb-2 uppercase tracking-wider">Mesaj trimis</p>
@@ -317,7 +339,7 @@ export default function AcasaPage() {
           </div>
 
           {/* Button - Third on mobile, inside text on desktop */}
-          <div className="order-3 mt-4 lg:absolute lg:-bottom-8 flex justify-center lg:justify-start">
+          <div className="order-3 mt-24 md:mt-4 lg:absolute lg:-bottom-8 flex justify-center lg:justify-start">
             <Link href="/login?mode=signup" className="bg-emerald-600 text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-emerald-700 hover:-translate-y-1 transition-all duration-300">
               Descoperă Biblioteca
             </Link>
