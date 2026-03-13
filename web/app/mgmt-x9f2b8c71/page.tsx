@@ -305,15 +305,16 @@ function MessageModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 z-50"
-            onClick={onClose}
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed bottom-0 left-0 right-0 z-50 md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-lg w-full bg-[#FAFAF9] rounded-t-3xl md:rounded-3xl p-6 shadow-xl pb-24 md:pb-6"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
+            <div className="absolute inset-0 bg-black/20" onClick={onClose} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative bg-[#FAFAF9] rounded-3xl p-6 shadow-xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-stone-800">
                 {message ? 'Editează Mesajul' : 'Mesaj Nou'}
@@ -371,6 +372,7 @@ function MessageModal({
               </button>
             </div>
           </motion.div>
+        </motion.div>
         </>
       )}
     </AnimatePresence>

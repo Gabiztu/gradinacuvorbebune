@@ -830,6 +830,12 @@ export default function AcasaPage() {
             <img src="/logonou1.png" alt="Logo" className="h-12 w-auto" />
             <span className="font-bold tracking-tight">Grădina cu Vorbe Bune</span>
           </div>
+          <div className="text-sm font-medium text-center">
+            Realizat de{' '}
+            <a href="https://www.linkedin.com/in/andreia-ionascu/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Andreia Ionașcu</a>
+            {' '}si{' '}
+            <a href="https://www.linkedin.com/in/gabriel-valentin-dragomir-a70929155" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Gabriel Dragomir</a>
+          </div>
           <div className="text-sm font-medium">
             © 2026. Toate drepturile rezervate.
           </div>
