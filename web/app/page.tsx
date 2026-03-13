@@ -133,11 +133,13 @@ export default function AcasaPage() {
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logonou1.png" alt="Logo" className="h-10 w-auto" />
-            <span className="text-[15px] font-bold tracking-tighter text-stone-800 flex flex-col uppercase leading-none">
-              <span>Grădina cu</span>
-              <span className="-mt-[2px]">Vorbe Bune</span>
-            </span>
+            <Link href="/" className="flex items-center gap-3">
+              <img src="/logonou1.png" alt="Logo" className="h-10 w-auto" />
+              <span className="text-[15px] font-bold tracking-tighter text-stone-800 flex flex-col uppercase leading-none">
+                <span>Grădina cu</span>
+                <span className="-mt-[2px]">Vorbe Bune</span>
+              </span>
+            </Link>
           </div>
           <div className="hidden md:flex items-center gap-6">
             <Link href="/blog" className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">

@@ -62,11 +62,13 @@ function DesktopSidebar() {
     <aside className="hidden md:flex w-64 flex-col justify-between p-6 z-10 glass-panel border-r border-white/40 h-screen fixed left-0 top-0">
       <div>
         <div className="mb-10 flex items-center gap-3">
-          <img src="/logonou1.png" alt="Logo" className="h-8 w-auto" />
-          <h1 className="flex flex-col text-[15px] font-bold tracking-tighter text-stone-800 uppercase">
-            <span className="leading-none">Gradina cu</span>
-            <span className="leading-none -mt-[3px]">Vorbe Bune</span>
-          </h1>
+          <Link href="/" className="flex items-center gap-3">
+            <img src="/logonou1.png" alt="Logo" className="h-8 w-auto" />
+            <h1 className="flex flex-col text-[15px] font-bold tracking-tighter text-stone-800 uppercase">
+              <span className="leading-none">Gradina cu</span>
+              <span className="leading-none -mt-[3px]">Vorbe Bune</span>
+            </h1>
+          </Link>
         </div>
 
         <nav className="space-y-1">
@@ -231,11 +233,13 @@ function MobileHeader() {
   return (
     <div className="md:hidden flex items-center justify-between mb-0 sticky top-0 bg-white/0 backdrop-blur-sm z-50 py-4 px-1">
         <div className="flex items-center gap-2 ml-5">
-          <img src="/logonou1.png" alt="Logo" className="h-8 w-auto" />
-          <h1 className="flex flex-col text-[15px] font-bold tracking-tighter text-stone-800 uppercase">
-            <span className="leading-none">Grădina cu</span>
-            <span className="leading-none -mt-[3px]">Vorbe Bune</span>
-          </h1>
+          <Link href="/" className="flex items-center gap-2">
+            <img src="/logonou1.png" alt="Logo" className="h-8 w-auto" />
+            <h1 className="flex flex-col text-[15px] font-bold tracking-tighter text-stone-800 uppercase">
+              <span className="leading-none">Grădina cu</span>
+              <span className="leading-none -mt-[3px]">Vorbe Bune</span>
+            </h1>
+          </Link>
           <Link href="/gradina" className="px-2 py-1 bg-green-50 text-green-700 text-xs rounded-full border border-green-100 flex items-center gap-1 font-medium ml-32 hover:bg-green-100 transition-colors">
             <iconify-icon icon="solar:leaf-bold" width="12" />
             Nivel {profile?.total_xp ? Math.floor(profile.total_xp / 250) + 1 : 1}

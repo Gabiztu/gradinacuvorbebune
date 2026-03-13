@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Heart, Mail, AlertCircle, CheckCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -248,14 +249,16 @@ export function AuthForm({ initialMode = 'login' }: { initialMode?: 'login' | 's
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
-        <div className="mb-6">
+        <Link href="/" className="mb-6 flex flex-col items-center">
           <img src="/logonou1.png" alt="Logo" className="w-16 h-16 rounded-2xl shadow-lg object-contain" />
-        </div>
+        </Link>
 
-        <h1 className="flex flex-col text-2xl font-bold tracking-tighter text-stone-800 uppercase mb-2">
-          <span className="leading-none">Grădina cu</span>
-          <span className="leading-none -mt-1">Vorbe Bune</span>
-        </h1>
+        <Link href="/">
+          <h1 className="flex flex-col text-2xl font-bold tracking-tighter text-stone-800 uppercase mb-2">
+            <span className="leading-none">Grădina cu</span>
+            <span className="leading-none -mt-1">Vorbe Bune</span>
+          </h1>
+        </Link>
 
         <p className="text-stone-500 text-center max-w-xs mb-6 font-light">
           {isSignUp
